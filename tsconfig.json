@@ -1,7 +1,21 @@
 {
-  "files": [],
-  "references": [
-    { "path": "./tsconfig.app.json" },
-    { "path": "./tsconfig.node.json" }
-  ]
+  "compilerOptions": {
+    "target": "ESNext",                        // Modern JS output
+    "lib": ["DOM", "DOM.Iterable", "ESNext"], // Browser + modern JS
+    "allowJs": false,                          // Only TypeScript files
+    "skipLibCheck": true,                      // Skip type checking of node_modules
+    "esModuleInterop": true,                   // Support default imports from CommonJS
+    "allowSyntheticDefaultImports": true,     
+    "strict": true,                            // Enable all strict type-checking
+    "forceConsistentCasingInFileNames": true,
+    "module": "ESNext",
+    "moduleResolution": "Node",
+    "resolveJsonModule": true,
+    "isolatedModules": true,
+    "noEmit": true,                            // Don't emit JS (handled by bundler)
+    "jsx": "react-jsx",                        // React 17+ JSX transform
+    "types": ["vite/client"]                   // For Vite projects; remove if CRA
+  },
+  "include": ["src"],
+  "exclude": ["node_modules", "dist"]
 }

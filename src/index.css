@@ -3,9 +3,54 @@ html, body {
   margin: 0;
   padding: 0;
   width: 100%;
-  height: 100%;
   font-family: 'Inter', sans-serif;
-  background-color: #0e0e0e;
+  /* background-color: #080808; */
   color: #f9f9f9;
-  overflow: hidden;
+}
+
+button {
+  cursor: pointer;
+}
+
+@keyframes shoot {
+  0% {
+    transform: translateX(0) translateY(0) rotate( -45deg);
+    opacity: 1;
+  }
+  100% {
+    transform: translateX(600px) translateY(200px) rotate(-45deg);
+    opacity: 0;
+  }
+}
+
+.shooting-star {
+  position: absolute;
+  width: 2px;
+  height: 80px;
+  background: linear-gradient(75deg, #ffffff4b, transparent);
+
+  border-radius: 9999px;
+  opacity: 0;
+  animation: shoot 5s linear infinite;
+}
+
+.shooting-star:nth-child(1) {
+  top: 20%;
+  left: 10%;
+  animation-delay: 0s;
+}
+.shooting-star:nth-child(2) {
+  top: 40%;
+  left: 60%;
+  animation-delay: 1s;
+}
+.shooting-star:nth-child(3) {
+  top: 70%;
+  left: 30%;
+  animation-delay: 2s;
+}
+.shooting-star:nth-child(4) {
+  top: 15%;
+  left: 80%;
+  animation-delay: 3s;
 }
