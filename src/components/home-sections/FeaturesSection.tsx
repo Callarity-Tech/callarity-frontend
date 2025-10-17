@@ -42,7 +42,10 @@ const whyChooseFeatures = [
   },
 ];
   return (
-<section className="relative w-full py-32 px-4 border-t border-gray-800 overflow-hidden">
+<section className="relative w-full py-32 px-4 border-t border-gray-800 overflow-hidden"
+>
+
+  
         {/* Background visuals */}
         <div className="absolute inset-0 pointer-events-none">
           {/* Animated grid background */}
@@ -89,9 +92,9 @@ const whyChooseFeatures = [
               <motion.div
                 key={i}
                 className="h-full"
-                initial={{ opacity: 0, y: 20 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true, amount: 0.3 }}
+                initial={{ opacity: 0, y: 20, scale: 0.95 , filter: "blur(5px)" }}
+                whileInView={{ opacity: 1, y: 0 , scale: 1, filter: "blur(0px)"}}
+                viewport={{ once: true, amount: 0.1 }}
                 transition={{ delay: i * 0.1, duration: 0.6 }}
               >
                 <ServicesCard feature={feature} />

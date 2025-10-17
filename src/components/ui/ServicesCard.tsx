@@ -29,7 +29,7 @@ export default function ServicesCard({ feature }: { feature: Feature }) {
       onMouseLeave={() => setIsHovering(false)}
       whileHover={{ scale: 1.03 }}
       style={{ perspective: 1000 }}
-      className="relative p-8 rounded-2xl h-full bg-[#ffffff05] border border-white/10 overflow-hidden cursor-pointer"
+      className="relative peer p-8 rounded-2xl h-full bg-[#ffffff05] border border-white/10 overflow-hidden cursor-pointer"
     >
       {/* Tilted inner content */}
       <motion.div
@@ -45,7 +45,7 @@ export default function ServicesCard({ feature }: { feature: Feature }) {
         <p className="text-gray-400 text-sm mb-4">{feature.desc}</p>
         <motion.a
           href="#"
-          className="inline-flex items-center gap-2 text-white font-medium text-sm hover:text-blue-400 transition-colors"
+          className="inline-flex peer-hover:text-black items-center gap-2 text-white font-medium text-sm hover:text-blue-400 transition-colors"
           whileHover={{ x: 5 }}
         >
           Learn More →
@@ -68,23 +68,7 @@ export default function ServicesCard({ feature }: { feature: Feature }) {
         )}
       </AnimatePresence>
 
-      {/* Floating particles */}
-      {isHovering &&
-        Array.from({ length: 6 }).map((_, idx) => (
-          <motion.div
-            key={idx}
-            initial={{ opacity: 0, scale: 0 }}
-            animate={{
-              opacity: 0.4,
-              scale: 1,
-              x: Math.random() * 200 - 100,
-              y: Math.random() * 200 - 100,
-            }}
-            exit={{ opacity: 0, scale: 0 }}
-            transition={{ duration: 0.6, repeat: Infinity, repeatType: "mirror" }}
-            className="absolute w-2 h-2 rounded-full bg-white/20"
-          />
-        ))}
+      
     </motion.div>
   );
 }
