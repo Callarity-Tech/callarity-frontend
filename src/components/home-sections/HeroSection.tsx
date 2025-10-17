@@ -1,5 +1,5 @@
 import { motion } from "framer-motion";
-
+import paperTex from "../../assets/paper-texture.webp";
 const title = "Callarity AI";
 
 function HeroSection() {
@@ -21,6 +21,8 @@ function HeroSection() {
     <section className="relative min-h-screen w-full flex flex-col items-center justify-center text-center px-4 py-20 overflow-hidden">
       {/* Grid Background */}
       <div className="absolute inset-0 pointer-events-none bg-[linear-gradient(rgba(255,255,255,0.05)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.05)_1px,transparent_1px)] bg-[size:50px_50px] z-0"></div>
+ 
+ <img src={paperTex} className="w-full h-full absolute opacity-30" />
 
       {/* Shooting Stars */}
       <div className="absolute inset-0 w-full h-full -z-0 overflow-hidden">
@@ -42,12 +44,12 @@ function HeroSection() {
       initial={{ opacity: 0, y: 20 , scale: 0.8 }}
       animate={{ opacity: 1, y: 0, scale: 1 }}
       transition={{ duration: 0.6 }}
-      className="absolute bottom-0 left-0 w-full h-40 blur-[200px]  bg-gradient-to-b from-transparent to-[#f8f8f8] pointer-events-none"></motion.div>
+      className="absolute bottom-0 left-0 w-full h-40 blur-[200px]  bg-gradient-to-b from-transparent to-[#f8f8f8a8] pointer-events-none"></motion.div>
       <motion.div
         initial={{ opacity: 0,y: 40 , scale: 0.4 }}
       animate={{ opacity: 1 , y: 0, scale: 1 }}
       transition={{ duration: 1.2 }}
-      className="absolute bottom-0 left-0 w-full h-16 blur-[100px]  bg-gradient-to-b from-transparent to-[#d268ff] pointer-events-none"></motion.div>
+      className="absolute bottom-0 left-0 w-full h-16 blur-[100px]  bg-gradient-to-b from-transparent to-[#d268ffad] pointer-events-none"></motion.div>
 
       {/* Main Content */}
       <motion.div
