@@ -3,6 +3,7 @@
 import CtaSection from "../components/home-sections/CtaSection";
 import FeaturesSection from "../components/home-sections/FeaturesSection";
 import HeroSection from "../components/home-sections/HeroSection";
+import PromoSection from "../components/home-sections/PromoSection";
 
 export default function Home() {
   return (
@@ -18,7 +19,10 @@ export default function Home() {
 
       {/* CTA SECTION */}
 
+<PromoSection />
+
       <CtaSection />
+
 
     </div>
   );

@@ -27,7 +27,7 @@ export default function ServicesCard({ feature }: { feature: Feature }) {
       onMouseMove={handleMouseMove}
       onMouseEnter={() => setIsHovering(true)}
       onMouseLeave={() => setIsHovering(false)}
-      whileHover={{ scale: 1.03 }}
+      whileHover={{ scale: 1.05 }}
       style={{ perspective: 1000 }}
       className="relative peer p-8 rounded-2xl h-full bg-[#ffffff05] border border-white/10 overflow-hidden cursor-pointer"
     >

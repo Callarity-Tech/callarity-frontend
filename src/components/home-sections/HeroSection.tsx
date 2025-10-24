@@ -22,7 +22,7 @@ function HeroSection() {
       {/* Grid Background */}
       <div className="absolute inset-0 pointer-events-none bg-[linear-gradient(rgba(255,255,255,0.05)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.05)_1px,transparent_1px)] bg-[size:50px_50px] z-0"></div>
  
- <img src={paperTex} className="w-full h-full absolute opacity-30" />
+ <img src={paperTex} className="w-full h-full absolute opacity-20" />
 
       {/* Shooting Stars */}
       <div className="absolute inset-0 w-full h-full -z-0 overflow-hidden">
@@ -34,22 +34,33 @@ function HeroSection() {
 
       {/* Bottom Blob */}
 
-      {/* <div
-        className="absolute bottom-0 left-1/2 -translate-x-1/2 w-[120%] h-[250px] bg-gradient-to-t from-white/60 via-purple-600/30 to-transparent 
+      <div
+        className="absolute bottom-0 left-1/2 -translate-x-1/2 w-[120%] h-[250px] bg-gradient-to-t from-white/60 via-red-600/30 to-transparent 
         rounded-t-full blur-3xl z-0"
-      ></div> */}
+      ></div>
 
       
       <motion.div
       initial={{ opacity: 0, y: 20 , scale: 0.8 }}
       animate={{ opacity: 1, y: 0, scale: 1 }}
       transition={{ duration: 0.6 }}
-      className="absolute bottom-0 left-0 w-full h-40 blur-[200px]  bg-gradient-to-b from-transparent to-[#f8f8f8a8] pointer-events-none"></motion.div>
+      className="absolute bottom-0 left-0 w-full h-40 blur-[200px]  bg-gradient-to-b from-transparent to-[#f8f8f88f] pointer-events-none"></motion.div>
       <motion.div
         initial={{ opacity: 0,y: 40 , scale: 0.4 }}
       animate={{ opacity: 1 , y: 0, scale: 1 }}
       transition={{ duration: 1.2 }}
       className="absolute bottom-0 left-0 w-full h-16 blur-[100px]  bg-gradient-to-b from-transparent to-[#d268ffad] pointer-events-none"></motion.div>
+
+       {/* <motion.div
+        initial={{ opacity: 0,y: 40 , scale: 0.4 }}
+      animate={{ opacity: 1 , y: 0, scale: 1 }}
+      transition={{ duration: 1.2 }}
+      className="absolute bottom-0 right-0 w-[20%] h-16 blur-[100px]  bg-gradient-to-b from-transparent to-red-500/40 pointer-events-none"></motion.div>
+       <motion.div
+        initial={{ opacity: 0,y: 40 , scale: 0.4 }}
+      animate={{ opacity: 1 , y: 0, scale: 1 }}
+      transition={{ duration: 1.2 }}
+      className="absolute bottom-0 left-0 w-[20%] h-16 blur-[100px]  bg-gradient-to-b from-transparent to-green-500/70 pointer-events-none"></motion.div> */}
 
       {/* Main Content */}
       <motion.div
