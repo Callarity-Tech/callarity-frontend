@@ -7,7 +7,7 @@ import PromoSection from "../components/home-sections/PromoSection";
 
 export default function Home() {
   return (
-    <div className="relative flex bg-black flex-col items-center justify-center  text-white overflow-hidden">
+    <div className="relative flex bg-black flex-col items-center justify-center  text-white ">
 
       {/* HERO SECTION */}
 
@@ -19,7 +19,10 @@ export default function Home() {
 
       {/* CTA SECTION */}
 
-<PromoSection />
+   <div className="w-full relative">
+        <PromoSection />
+      </div>
+
 
       <CtaSection />
 

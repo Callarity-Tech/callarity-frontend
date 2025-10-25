@@ -133,7 +133,7 @@ function FeaturesSection() {
       <div className="absolute inset-0 pointer-events-none">
         <div className="absolute inset-0 bg-[linear-gradient(rgba(255,255,255,.05)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,.05)_1px,transparent_1px)] bg-[size:50px_50px] opacity-10" />
         <motion.div
-          className="absolute top-1/3 -right-40 w-96 h-96 bg-pink-500/15 rounded-full blur-[100px]"
+          className="absolute top-1/3 -right-40 w-96 h-96 bg-red-500/15 rounded-full blur-[100px]"
           animate={{ 
             x: [0, -30, 0], 
             y: [0, 20, 0],
@@ -147,7 +147,7 @@ function FeaturesSection() {
           }}
         />
         <motion.div
-          className="absolute bottom-1/3 -left-40 w-96 h-96 bg-purple-500/15 rounded-full blur-[100px]"
+          className="absolute bottom-1/3 -left-40 w-96 h-96 bg-pink-500/15 rounded-full blur-[100px]"
           animate={{ 
             x: [0, 30, 0], 
             y: [0, -20, 0],

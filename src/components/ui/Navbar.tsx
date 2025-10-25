@@ -76,9 +76,9 @@ const Navbar: React.FC = () => {
                     onMouseEnter={() => setHovered(item.id)}
                     onMouseLeave={() => setHovered(null)}
                     href={item.href ?? "#"}
-                    className={`flex items-center justify-center px-4 py-2 rounded-2xl font-medium text-sm transition-all duration-200 relative overflow-hidden ${
+                    className={`flex items-center justify-center px-4 py-2 rounded-2xl  text-sm transition-all duration-200 relative overflow-hidden ${
                       isButton
-                        ? "border border-red-500/70 hover:bg-red-600/30 text-red-200 before:absolute before:inset-x-0 before:top-0 before:h-px before:bg-gradient-to-r before:from-transparent before:via-white/60 before:to-transparent before:opacity-70"
+                        ? "border border-red-500/70  font-semibold hover:bg-red-600/30 text-red-100 before:absolute before:inset-x-0 before:top-0 before:h-px before:bg-gradient-to-r before:from-transparent before:via-white/60 before:to-transparent before:opacity-70"
                         : isActive
                         ? "text-white"
                         : "text-gray-300 hover:text-white"
