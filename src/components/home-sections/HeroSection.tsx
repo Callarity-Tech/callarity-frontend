@@ -4,20 +4,6 @@ import paperTex from "../../assets/paper-texture.webp";
 const title = "Callarity AI";
 
 function HeroSection() {
-  const letterVariants = {
-    hidden: { opacity: 0, y: 20 },
-    visible: (i: number) => ({
-      opacity: 1,
-      y: 0,
-      transition: {
-        delay: i * 0.04,
-        type: "spring",
-        stiffness: 100,
-        damping: 12,
-      },
-    }),
-  };
-
   return (
     <section className="relative min-h-screen w-full flex flex-col items-center justify-center text-center px-4 overflow-hidden">
       {/* Grid Background */}
@@ -44,13 +30,13 @@ function HeroSection() {
         animate={{ opacity: 1, y: 0, scale: 1 }}
         transition={{ duration: 0.6 }}
         className="absolute bottom-0 left-0 w-full h-40 blur-[200px] bg-gradient-to-b from-transparent to-[#f8f8f88f] pointer-events-none"
-      ></motion.div>
+      />
       <motion.div
         initial={{ opacity: 0, y: 40, scale: 0.4 }}
         animate={{ opacity: 1, y: 0, scale: 1 }}
         transition={{ duration: 1.2 }}
         className="absolute bottom-0 left-0 w-full h-16 blur-[100px] bg-gradient-to-b from-transparent to-[#d268ffad] pointer-events-none"
-      ></motion.div>
+      />
 
       {/* Angled Shine */}
       <div className="absolute w-96 h-[200%] rotate-[-45deg] bg-white/10 rounded-full filter blur-3xl animate-spin-slow"></div>
@@ -75,17 +61,19 @@ function HeroSection() {
         transition={{ duration: 0.6 }}
         className="space-y-6 max-w-4xl z-10 flex flex-col items-center"
       >
-        <motion.h1
-          className="text-5xl md:text-7xl lg:text-8xl font-bold tracking-tight text-white flex justify-center flex-wrap gap-1"
-          initial="hidden"
-          animate="visible"
-        >
+        <h1 className="text-5xl md:text-7xl lg:text-8xl font-bold tracking-tight text-white flex justify-center flex-wrap gap-1">
           {[...title].map((char, i) => (
-            <motion.span key={i} variants={letterVariants} custom={i} className="inline-block">
+            <motion.span
+              key={i}
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: i * 0.04, type: "spring", stiffness: 100, damping: 12 }}
+              className="inline-block"
+            >
               {char === " " ? "\u00A0" : char}
             </motion.span>
           ))}
-        </motion.h1>
+        </h1>
 
         <motion.p
           className="text-lg md:text-2xl text-gray-300 font-medium"
