@@ -2,6 +2,7 @@ import { BrowserRouter, Route, Routes } from "react-router";
 import { useEffect } from "react";
 import Home from "./pages/Home";
 import Lenis from "@studio-freight/lenis";
+import Navbar from "./components/ui/Navbar";
 function App() {
     useEffect(() => {
     const lenis = new Lenis({
@@ -24,7 +25,7 @@ function App() {
   }, []);
   return (
     <BrowserRouter>
-      {" "}
+      {" "} <Navbar />
       <Routes>
         <Route path="/" element={<Home />} />
       </Routes>

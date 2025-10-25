@@ -89,7 +89,7 @@ export default function CtaSection() {
               />
               <button
                 type="submit"
-                className="px-4 py-2 bg-gradient-to-tr from-cyan-300 to-red-400 rounded-lg font-semibold text-[#0b0d13] text-sm hover:opacity-90 transition"
+                className="px-4 py-2 bg-gradient-to-tr from-red-700 to-red-400 rounded-lg font-semibold text-[#ffffff] text-sm hover:opacity-90 transition"
               >
                 Subscribe
               </button>
@@ -126,7 +126,7 @@ export default function CtaSection() {
                         className="relative group transition text-gray-400 hover:text-white"
                       >
                         {link}
-                        <span className="absolute left-0 bottom-[-2px] h-[1px] w-0 bg-gradient-to-r from-cyan-300 to-purple-400 transition-all duration-300 group-hover:w-full"></span>
+                        <span className="absolute left-0 bottom-[-2px] h-[1px] w-0 bg-gradient-to-r from-red-300 to-red-400 transition-all duration-300 group-hover:w-full"></span>
                       </a>
                     </li>
                   ))}
@@ -156,24 +156,3 @@ export default function CtaSection() {
   );
 }
 
-/* === Shiny Outline Text === */
-// function ShinyOutlineText() {
-//   return (
-//     <motion.h1
-//       className="font-extrabold text-[clamp(64px,18vw,200px)] leading-[0.8] text-transparent tracking-wider uppercase [-webkit-text-stroke:2px_rgba(255,255,255,0.2)] select-none"
-//       animate={{ backgroundPosition: ["200% center", "-200% center"] }}
-//       transition={{ duration: 6, ease: "easeInOut", repeat: Infinity }}
-//       style={{
-//         background:
-//           "linear-gradient(90deg, rgba(167,139,250,0.8), rgba(255,255,255,0.9), rgba(103,232,249,0.8))",
-//         backgroundSize: "200% 100%",
-//         WebkitBackgroundClip: "text",
-//         WebkitTextFillColor: "transparent",
-//         WebkitTextStroke: "2px transparent",
-//         mixBlendMode: "screen",
-//       }}
-//     >
-//       CALLARITY
-//     </motion.h1>
-//   );
-// }
