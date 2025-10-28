@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Reasons to Choose Callarity</title>
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+
+    <div class="whycallarity-section">
+        
+        <header class="header-content">
+            <h1>Reasons to Choose Callarity for</h1>
+            <h2>Your Business</h2>
+            <p class="hero-description">
+                Partnering with Callarity means your business unlocks next-gen customer engagement. Experience higher response rates, personalized voice outreach in regional languages, and automation that runs 24/7—all without hiring a single agent. We help you convert leads, retain customers, and scale fast with AI-driven voice automation.
+            </p>
+        </header>
+
+        <div class="feature-grid">
+            <div class="feature-card">
+                <div class="icon-bg"><i class="icon-star"></i></div>
+                <h3>AI Voice Expertise That Converts</h3>
+                <p>
+                    Our team blends NLP, voice tech, and regional language fluency to craft AI callers that sound natural and drive real outcomes — from appointment bookings to feedback collection.
+                </p>
+                <a href="#" class="learn-more">
+                    Learn More <span class="arrow">→</span>
+                </a>
+            </div>
+
+            <div class="feature-card">
+                <div class="icon-bg"><i class="icon-bulb"></i></div>
+                <h3>Industry-Specific, Goal-Oriented AI Call Automation</h3>
+                <p>
+                    No two businesses are alike. Whether you're a real estate broker or a coaching center, we customize scripts and call flows to match your exact needs and tone.
+                </p>
+                <a href="#" class="learn-more">
+                    Learn More <span class="arrow">→</span>
+                </a>
+            </div>
+
+            <div class="feature-card">
+                <div class="icon-bg"><i class="icon-mic"></i></div>
+                <h3>Natural, Multilingual Communication</h3>
+                <p>
+                    Stand out with AI that speaks like your customers — in Hindi, Tamil, Marathi, Bengali, and more. No robotic tones. Just natural conversations.
+                </p>
+                <a href="#" class="learn-more">
+                    Learn More <span class="arrow">→</span>
+                </a>
+            </div>
+
+            <div class="feature-card">
+                <div class="icon-bg"><i class="icon-mobile"></i></div>
+                <h3>Mobile-Ready Voice Stack</h3>
+                <p>
+                    Our AI voice system is optimized for mobile-first users, ensuring smooth delivery and crystal-clear quality for recipients on any device.
+                </p>
+                <a href="#" class="learn-more">
+                    Learn More <span class="arrow">→</span>
+                </a>
+            </div>
+
+            <div class="feature-card">
+                <div class="icon-bg"><i class="icon-bolt"></i></div>
+                <h3>Smart Outreach & Follow-Up Logic</h3>
+                <p>
+                    Our AI doesn't just call — it follows up, handles objections, collects responses, and syncs everything to your CRM for precise lead tracking.
+                </p>
+                <a href="#" class="learn-more">
+                    Learn More <span class="arrow">→</span>
+                </a>
+            </div>
+
+            <div class="feature-card">
+                <div class="icon-bg"><i class="icon-grid"></i></div>
+                <h3>Call Analytics & Optimization</h3>
+                <p>
+                    Track pickup rates, call durations, and user sentiments. With Callarity's analytics dashboard, you're always improving and closing faster.
+                </p>
+                <a href="#" class="learn-more">
+                    Learn More <span class="arrow">→</span>
+                </a>
+            </div>
+        </div>
+
+    </div>
+<script>
+  // Glowing corner effect based on mouse position
+  document.querySelectorAll('.feature-card').forEach(card => {
+    card.addEventListener('mousemove', e => {
+      const rect = card.getBoundingClientRect();
+      const x = e.clientX - rect.left;
+      const y = e.clientY - rect.top;
+      card.style.setProperty('--x', `${x}px`);
+      card.style.setProperty('--y', `${y}px`);
+    });
+  });
+</script>
+
+</body>
+</html>

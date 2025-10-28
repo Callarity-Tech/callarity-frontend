@@ -1,0 +1,217 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+/* BODY AND MAIN SECTION STYLING */
+body {
+    background-color: black;
+    color: white; /* Default text color is white */
+    font-family: 'Poppins', sans-serif; 
+    min-height: 100vh;
+    padding: 4rem 1rem; /* Padding for the entire page */
+}
+
+.whycallarity-section {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 15px;
+}
+
+/* HEADER STYLING */
+.header-content {
+    text-align: center;
+    max-width: 800px;
+    margin: 0 auto 50px;
+}
+
+.header-content h1 {
+    font-size: 2.8rem;
+    font-weight: 600;
+    margin-bottom: 0;
+}
+
+.header-content h2 {
+    font-size: 2.8rem;
+    font-weight: 600;
+    color: #999999; /* Lighter color for 'Your Business' */
+    margin-bottom: 25px;
+}
+
+.hero-description {
+    font-size: 1rem;
+    color: #aaaaaa;
+    font-weight: 300;
+    line-height: 1.6;
+}
+
+
+/* FEATURE GRID STYLING */
+.feature-grid {
+    display: grid;
+    /* Create 3 equal columns with a gap between them */
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 30px;
+}
+
+.feature-card {
+    background-color: #1a1a1a; /* Slightly lighter background for cards */
+    padding: 30px;
+    border-radius: 12px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between; /* Push the "Learn More" to the bottom */
+}
+
+.feature-card h3 {
+    font-size: 1.25rem;
+    font-weight: 500;
+    margin-bottom: 15px;
+}
+
+.feature-card p {
+    font-size: 0.9rem;
+    color: #cccccc;
+    line-height: 1.5;
+    margin-bottom: 25px;
+    flex-grow: 1; /* Allows the paragraphs to take up available space */
+}
+
+
+/* ICON STYLING (Placeholder for real icons) */
+.icon-bg {
+    width: 40px;
+    height: 40px;
+    background-color: #333333; /* Dark background for the icon circle */
+    border-radius: 50%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-bottom: 20px;
+    /* Apply a faint glow effect similar to the image */
+    box-shadow: 0 0 10px rgba(255, 255, 255, 0.1); 
+}
+
+/* Placeholder for the different icons (using simple text) */
+.icon-star::before { content: "✨"; font-size: 1.2rem;}
+.icon-bulb::before { content: "💡"; font-size: 1.2rem; }
+.icon-mic::before { content: "🎙️"; font-size: 1.2rem; }
+.icon-mobile::before { content: "📱"; font-size: 1.2rem; }
+.icon-bolt::before { content: "⚡"; font-size: 1.2rem; }
+.icon-grid::before { content: "📊"; font-size: 1.2rem; }
+
+
+/* LEARN MORE LINK STYLING */
+.learn-more {
+    color: white;
+    text-decoration: none;
+    font-weight: 500;
+    font-size: 0.95rem;
+    display: flex;
+    align-items: center;
+    width: fit-content;
+    transition: color 0.3s;
+}
+
+.learn-more:hover {
+    color: #5b5bff; /* Highlight color on hover */
+}
+
+.learn-more .arrow {
+    margin-left: 8px;
+    font-size: 1.2rem;
+    transition: transform 0.3s;
+}
+
+.learn-more:hover .arrow {
+    transform: translateX(3px); /* Small slide effect on hover */
+}
+
+/* MEDIA QUERY for smaller screens (e.g., mobile) */
+@media (max-width: 768px) {
+    .feature-grid {
+        /* On small screens, stack the cards */
+        grid-template-columns: 1fr;
+    }
+
+    body {
+        padding: 2rem 1rem;
+    }
+    
+    .header-content h1, .header-content h2 {
+        font-size: 1.5rem;
+    }
+}
+
+/* ===== Glowing Corner Hover Effect ===== */
+.feature-card {
+  position: relative;
+  background: #1a1a1a;
+  overflow: hidden;
+  transition: transform 0.3s ease;
+}
+.feature-card {
+  position: relative;
+  background: #1a1a1a;
+  overflow: hidden;
+  transition: transform 0.3s ease;
+}
+
+/* default transparent glow */
+.feature-card::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(
+    circle at var(--x, 50%) var(--y, 50%),
+    var(--glow-color, rgba(255, 255, 255, 0.3)),
+    transparent 70%
+  );
+  opacity: 0;
+  transition: opacity 0.3s ease;
+  pointer-events: none;
+}
+
+/* glow visible on hover */
+.feature-card:hover::before {
+  opacity: 1;
+}
+
+.feature-card:hover {
+  transform: translateY(-5px);
+}
+
+
+.feature-card:hover::before {
+  opacity: 1;
+}
+
+.feature-card:hover {
+  transform: translateY(-5px);
+}
+
+.feature-card:nth-child(1) {
+  --glow-color: rgba(255, 60, 60, 0.35);   /* Red */
+}
+
+.feature-card:nth-child(2) {
+  --glow-color: rgba(60, 255, 100, 0.35);  /* Green */
+}
+
+.feature-card:nth-child(3) {
+  --glow-color: rgba(60, 180, 255, 0.35);  /* Blue */
+}
+
+.feature-card:nth-child(4) {
+  --glow-color: rgba(255, 200, 60, 0.35);  /* Yellow */
+}
+
+.feature-card:nth-child(5) {
+  --glow-color: rgba(255, 80, 200, 0.35);  /* Pink/Violet */
+}
+
+.feature-card:nth-child(6) {
+  --glow-color: rgba(100, 255, 255, 0.35); /* Aqua */
+}
+
