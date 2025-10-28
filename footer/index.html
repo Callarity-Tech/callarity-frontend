@@ -1,0 +1,384 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Callarity – Circular Reveal Footer</title>
+<style>
+  :root{
+    --bg: #0a0c12;
+    --card: #0f1118;
+    --text: #e8ecf3;
+    --muted: #a6adbb;
+    --a1: #67e8f9;   /* cyan */
+    --a2: #a78bfa;   /* purple */
+    --ring: #7dd3fc;
+    --maxw: 1200px;
+
+    /* radius of the circular reveal (updated by JS) */
+    --r: 0vmax;
+    /* 0..1 progress for additional effects */
+    --p: 0;
+  }
+
+  /* Reset */
+  *,*::before,*::after{ box-sizing: border-box; }
+  html,body{ height: 100%; }
+  body{
+    margin: 0;
+    font-family: Inter, ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
+    background: var(--bg);
+    color: var(--text);
+  }
+  a{ color: inherit; text-decoration: none; }
+
+  /* ===== Demo content above footer (remove in integration) ===== */
+  .page{
+    min-height: 160vh; /* enough scroll so reveal feels nice */
+    background:
+      radial-gradient(1000px 800px at 50% -10%,
+        color-mix(in oklab, var(--a2) 14%, transparent) 0%,
+        transparent 60%) ,
+      linear-gradient(180deg, #0a0c12 0%, #07080d 100%);
+  }
+  .fake-content{
+    max-width: 760px; margin: 0 auto; padding: 18vh 20px 20vh;
+    line-height: 1.6; color: var(--muted);
+  }
+  .fake-content h1{ color: var(--text); letter-spacing: .2px; }
+
+  /* ===== Reveal section wrapper ===== */
+  .reveal-footer{
+    position: relative;
+    height: 180vh; /* scroll distance controlling the reveal */
+    /* subtle background so the big word sits on it */
+    background:
+      radial-gradient(1200px 900px at 50% 0%,
+        color-mix(in oklab, var(--a1) 10%, transparent) 0%,
+        transparent 60%);
+  }
+
+  /* Big bottom word like Iced */
+  .bg-word{
+    position: sticky;
+    bottom: 0; /* pins to bottom while you scroll this section */
+    height: 100vh;
+    display: grid;
+    place-items: end center;
+    pointer-events: none;
+    z-index: 0;
+  }
+  .bg-word span{
+    display: block;
+    margin-bottom: 4vh;
+    font-weight: 800;
+    letter-spacing: .04em;
+    font-size: clamp(56px, 18vw, 240px);
+    line-height: .8;
+    color: transparent;
+    -webkit-text-stroke: 2px rgba(255,255,255,.08);
+    text-stroke: 2px rgba(255,255,255,.08);
+    /* Fade/scale in slightly with progress */
+    transform: scale(calc(1 + (.06 * var(--p))));
+    opacity: calc(.2 + .6 * var(--p));
+    transition: opacity .2s linear;
+  }
+
+  /* The pinned stage that holds the circularly-revealed footer */
+  .stage{
+    position: sticky;
+    bottom: 0;
+    height: 100vh;
+    display: grid;
+    place-items: center;
+    z-index: 1;
+  }
+
+  /* Container that gets circular mask applied */
+  .circle-reveal{
+    position: relative;
+    width: min(1120px, 94vw);
+    border-radius: 24px;
+    overflow: clip;
+    /* Reveal mask: white = visible, transparent = hidden */
+    -webkit-mask-image: radial-gradient(circle at 50% 60%, #fff var(--r), transparent calc(var(--r) + 1px));
+            mask-image: radial-gradient(circle at 50% 60%, #fff var(--r), transparent calc(var(--r) + 1px));
+    -webkit-mask-repeat: no-repeat;
+            mask-repeat: no-repeat;
+    -webkit-mask-size: 200% 200%;
+            mask-size: 200% 200%;
+    /* nice glow behind the circle as it grows */
+    box-shadow:
+      0 0 0 1px rgba(255,255,255,.06),
+      0 30px 100px rgba(167,139,250,.18),
+      0 40px 140px rgba(103,232,249,.14);
+    /* optional scale-in for extra punch */
+    transform: scale(calc(.9 + .1 * var(--p)));
+    transition: transform .1s linear;
+  }
+
+  /* Pretty footer card inside the circle */
+  .footer-card{
+    position: relative;
+    background:
+      radial-gradient(1000px 700px at 20% 0%,
+        color-mix(in oklab, var(--a2) 22%, transparent) 0%, transparent 60%),
+      radial-gradient(900px 700px at 80% 120%,
+        color-mix(in oklab, var(--a1) 20%, transparent) 0%, transparent 60%),
+      linear-gradient(180deg, #0b0e15 0%, #090b12 100%);
+    border: 1px solid rgba(255,255,255,.06);
+    border-radius: 24px;
+    padding: clamp(24px, 3.6vw, 40px);
+  }
+
+  .inner{
+    max-width: var(--maxw);
+    margin: 0 auto;
+  }
+
+  /* Top: brand + newsletter */
+  .top{
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 18px;
+    padding-bottom: 24px;
+    border-bottom: 1px dashed rgba(255,255,255,.08);
+  }
+  .brand{ display: flex; align-items: center; gap: 12px; }
+  .logo{
+  width: 40px;
+  height: 40px;
+  aspect-ratio: 1 / 1;
+  border-radius: 10px;
+  object-fit: contain;      /* keeps the whole logo visible */
+  display: block;
+  background: transparent;  /* removes gradient placeholder */
+  border: none;
+  box-shadow: none;
+  /* optional: a soft glow on dark backgrounds */
+  filter: drop-shadow(0 4px 12px rgba(0,0,0,.35));
+}
+
+  
+  .brand h3{ margin: 0; letter-spacing: .2px; font-weight: 800; }
+  .brand small{ color: var(--muted); display:block; margin-top: 2px; }
+
+  .newsletter{
+    display: grid; grid-template-columns: 1fr auto; gap: 10px;
+    background: color-mix(in oklab, var(--card) 86%, black 14%);
+    border: 1px solid rgba(255,255,255,.08);
+    border-radius: 14px;
+    padding: 10px;
+  }
+  .newsletter input{
+    background: transparent; border: 0; color: var(--text);
+    padding: 14px 12px; outline: none; font-size: 14px;
+  }
+  .newsletter input::placeholder{ color: #8d97a8; }
+  .btn{
+    border: 0; padding: 12px 16px; border-radius: 12px; font-weight: 700; cursor: pointer;
+    background: linear-gradient(135deg, var(--a1), var(--a2)); color:#0b0d13;
+  }
+  .btn:focus-visible{ outline: 2px solid var(--ring); outline-offset: 3px; }
+
+  /* Grid links */
+  .grid{
+    display: grid;
+    grid-template-columns: repeat(12, 1fr);
+    gap: clamp(12px, 2vw, 24px);
+    padding-top: 24px;
+  }
+  .col{
+    grid-column: span 6;
+    background: linear-gradient(180deg, rgba(255,255,255,.02), rgba(255,255,255,0));
+    border: 1px solid rgba(255,255,255,.06);
+    border-radius: 16px;
+    padding: 18px;
+  }
+  .col h4{
+    margin: 0 0 10px; font-size: 13px; letter-spacing:.14em;
+    color: #cfd6e4; text-transform: uppercase;
+  }
+  .links{ display: grid; gap: 8px; }
+  .links a{
+    position: relative; display: inline-flex; align-items: center; gap: 8px;
+    color: #cdd4e3; font-size: 15px;
+  }
+  .links a .line{
+    position: absolute; left: 0; bottom: -2px; height: 1px; width: 0%;
+    background: linear-gradient(90deg, var(--a1), var(--a2));
+    transition: width .35s ease;
+  }
+  .links a:hover .line{ width: 100%; }
+
+  /* Bottom row */
+  .bottom{
+    display: grid; grid-template-columns: 1fr; gap: 10px;
+    padding-top: 24px; margin-top: 24px;
+    border-top: 1px dashed rgba(255,255,255,.08);
+    color: var(--muted); font-size: 14px;
+  }
+  .social{ display:flex; gap:10px; flex-wrap: wrap; }
+  .icon{
+    width: 36px; height: 36px; display:grid; place-items:center;
+    border-radius: 10px; border: 1px solid rgba(255,255,255,.08);
+    background: color-mix(in oklab, var(--card) 85%, black 15%);
+  }
+
+  /* Responsive */
+  @media (min-width: 720px){
+    .top{ grid-template-columns: 1fr auto; align-items: center; }
+    .col{ grid-column: span 3; }
+    .bottom{ grid-template-columns: 1fr auto; align-items: center; }
+  }
+
+  /* Reduced motion: just show it */
+  @media (prefers-reduced-motion: reduce){
+    .circle-reveal{ -webkit-mask-image:none; mask-image:none; transform:none; }
+    .bg-word span{ opacity:.6; transform:none; }
+  }
+</style>
+</head>
+<body>
+
+  <!-- ============ Content above footer (delete in integration) ============ -->
+  <main class="page">
+    <div class="fake-content">
+      <h1>Scroll down to see the circular footer reveal</h1>
+      <p>Replace this whole section with our site. Keep the <strong>.reveal-footer</strong> block at the end of the page.</p>
+      <p>The footer will reveal as a growing circle and a big background word “CALLARITY” will sit at the bottom behind it.</p>
+    </div>
+  </main>
+
+  <!-- ============ Iced-style circular reveal footer section ============ -->
+  <section class="reveal-footer" id="reveal-footer">
+    <!-- Big sticky background word -->
+    <div class="bg-word">
+      <span>CALLARITY</span>
+    </div>
+
+    <!-- Pinned stage with circularly-masked footer -->
+    <div class="stage" aria-hidden="false">
+      <div class="circle-reveal" id="circle">
+        <footer class="footer-card">
+          <div class="inner">
+
+            <div class="top">
+              <div class="brand">
+                 <img class="logo" src="callaritylogo.png" alt="Callarity logo">
+                <div>
+                  <h3>Callarity</h3>
+                  <small>AI voice agent that talk like humans</small>
+                </div>
+              </div>
+
+              <form class="newsletter" onsubmit="event.preventDefault()">
+                <input type="email" placeholder="Your email address" aria-label="Email" required>
+                <button class="btn" type="submit">Subscribe</button>
+              </form>
+            </div>
+
+            <div class="grid">
+              <section class="col">
+                <h4>Product</h4>
+                <nav class="links">
+                  <a href="#"><span>Overview</span><span class="line"></span></a>
+                  <a href="#"><span>Live Demo</span><span class="line"></span></a>
+                  <a href="#"><span>Pricing</span><span class="line"></span></a>
+                  <a href="#"><span>Changelog</span><span class="line"></span></a>
+                </nav>
+              </section>
+
+              <section class="col">
+                <h4>Solutions</h4>
+                <nav class="links">
+                  <a href="#"><span>Coaching Centers</span><span class="line"></span></a>
+                  <a href="#"><span>Clinics</span><span class="line"></span></a>
+                  <a href="#"><span>Real Estate</span><span class="line"></span></a>
+                  <a href="#"><span>Custom</span><span class="line"></span></a>
+                </nav>
+              </section>
+
+              <section class="col">
+                <h4>Developers</h4>
+                <nav class="links">
+                  <a href="#"><span>Docs</span><span class="line"></span></a>
+                  <a href="#"><span>API Reference</span><span class="line"></span></a>
+                  <a href="#"><span>Status</span><span class="line"></span></a>
+                  <a href="#"><span>Open Source</span><span class="line"></span></a>
+                </nav>
+              </section>
+
+              <section class="col">
+                <h4>Company</h4>
+                <nav class="links">
+                  <a href="#"><span>About</span><span class="line"></span></a>
+                  <a href="#"><span>Careers</span><span class="line"></span></a>
+                  <a href="#"><span>Contact</span><span class="line"></span></a>
+                  <a href="#"><span>Privacy</span><span class="line"></span></a>
+                </nav>
+              </section>
+            </div>
+
+            <div class="bottom">
+              <div>© <span id="year"></span> Callarity. All rights reserved.</div>
+              <div class="social" aria-label="Social links">
+                <a class="icon" href="#" aria-label="Twitter X">
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                    <path d="M18.244 2H21l-6.818 7.8L22 22h-6.938l-4.52-5.624L4.2 22H2l7.292-8.352L2 2h7.062l4.174 5.194L18.244 2Zm-2.43 18h2.053L8.277 4H6.143l9.671 16Z" fill="currentColor"/>
+                  </svg>
+                </a>
+                <a class="icon" href="#" aria-label="LinkedIn">
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                    <path fill="currentColor" d="M6.94 8.5H4V20h2.94V8.5ZM5.47 7.1a1.72 1.72 0 1 0 0-3.44 1.72 1.72 0 0 0 0 3.44ZM20 20h-2.94v-5.89c0-1.4-.03-3.2-1.95-3.2-1.95 0-2.25 1.52-2.25 3.1V20H9.92V8.5h2.82v1.57h.04c.39-.74 1.35-1.52 2.78-1.52 2.97 0 3.44 1.96 3.44 4.5V20Z"/>
+                  </svg>
+                </a>
+                <a class="icon" href="#" aria-label="GitHub">
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                    <path fill="currentColor" d="M12 .5A11.5 11.5 0 0 0 .5 12.4c0 5.27 3.41 9.73 8.15 11.31.6.1.82-.27.82-.59v-2.2c-3.31.74-4-1.45-4-1.45-.55-1.4-1.34-1.78-1.34-1.78-1.1-.78.08-.76.08-.76 1.22.09 1.87 1.28 1.87 1.28 1.08 1.89 2.83 1.34 3.52 1.03.11-.8.42-1.34.76-1.65-2.65-.31-5.44-1.37-5.44-6.1 0-1.35.47-2.45 1.25-3.31-.13-.31-.54-1.58.12-3.3 0 0 1.01-.33 3.3 1.26a11.2 11.2 0 0 1 6 0c2.3-1.6 3.3-1.26 3.3-1.26.66 1.72.25 2.99.12 3.3.78.86 1.25 1.96 1.25 3.31 0 4.74-2.8 5.79-5.47 6.1.43.37.82 1.1.82 2.22v3.28c0 .32.22.7.83.58A11.51 11.51 0 0 0 23.5 12.4 11.5 11.5 0 0 0 12 .5Z"/>
+                  </svg>
+                </a>
+              </div>
+            </div>
+
+          </div>
+        </footer>
+      </div>
+    </div>
+  </section>
+
+<script>
+  // current year
+  document.getElementById('year').textContent = new Date().getFullYear();
+
+  // === Scroll-driven circular mask ===
+  // The section itself defines the scroll span. We map scroll progress [0..1]
+  // to a radius in vmax so it grows from a point to fill the footer.
+  const section = document.getElementById('reveal-footer');
+  const root = document.documentElement;
+
+  function clamp(v, min, max){ return Math.min(max, Math.max(min, v)); }
+
+  function update(){
+    const rect = section.getBoundingClientRect();
+    const vh = window.innerHeight || 1;
+
+    // Progress: when top hits bottom of viewport (start) to when bottom hits bottom (end)
+    const start = vh;                            // section top at bottom viewport
+    const end   = rect.height;                   // when you've scrolled through the section
+    const y = clamp(end - rect.bottom, 0, end);  // how far inside the section
+    const p = clamp(y / (end - start), 0, 1);
+
+    // radius: small to very large; tweak 6vmax baseline and 140vmax max
+    const r = (6 + 134 * p) + 'vmax';
+
+    root.style.setProperty('--r', r);
+    root.style.setProperty('--p', p.toFixed(3));
+  }
+
+  // run on load/scroll/resize
+  ['scroll','resize','load'].forEach(evt => addEventListener(evt, update, {passive:true}));
+  update();
+</script>
+</body>
+</html>
