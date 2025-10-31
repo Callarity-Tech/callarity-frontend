@@ -1,7 +1,9 @@
 import React, { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useInView } from "react-intersection-observer";
-
+import promo_auto_img from "../../assets/promo_integration_flow.png";
+import promo_call_img from "../../assets/promo_call_flow.png";
+import paper from "../../assets/paper-texture.webp";
 const cards = [
   {
     heading: "Call Flow",
@@ -10,16 +12,7 @@ const cards = [
       "Maintains accuracy even in regional and code-mixed languages.",
       "Understands intent, emotion, and context for natural responses.",
     ],
-    img: "https://i.pinimg.com/474x/ba/92/6a/ba926ae6bcb0aa377cab8bfa2b91090e.jpg",
-  },
-  {
-    heading: "Integration Flow",
-    bullets: [
-      "Natural multilingual voices respond within milliseconds.",
-      "Understands intent, emotion, and context for natural responses.",
-      "Every interaction can trigger automated follow-ups.",
-    ],
-    img: "https://i.pinimg.com/1200x/97/51/fa/9751fac2fa49f245b81d6a81f9854bb3.jpg",
+    img: promo_call_img,
   },
   {
     heading: "Automation Flow",
@@ -28,7 +21,7 @@ const cards = [
       "Triggers follow-ups in CRMs, WhatsApp, or Google Sheets automatically.",
       "Enhances automation and productivity seamlessly.",
     ],
-    img: "https://i.pinimg.com/736x/b8/0e/49/b80e494bf559390355d59179a11e5cba.jpg",
+    img: promo_auto_img,
   },
 ];
 
@@ -36,10 +29,19 @@ export default function CinematicScroll() {
   const [activeIndex, setActiveIndex] = useState(0);
 
   return (
-    <section className="flex justify-center flex-col items-center w-full relative">
-         <div className="text-center max-w-5xl mx-auto px-4 border-b border-white/20 pb-20">
+    <section className="flex justify-center flex-col items-center w-full relative bg-white/5 pt-24 bg-gradient-to-b from-gray-900 via-gray-800 to-black 
+    bg-[linear-gradient(to_right,rgba(255,255,255,0.05)_1px,transparent_1px),linear-gradient(to_bottom,rgba(255,255,255,0.05)_1px,transparent_1px)] 
+    bg-[size:24px_24px] ">
+    
+
+      <img src={paper} className=" w-full h-full absolute top-0 opacity-10" />
+
+      <span className="absolute top-50 left-0 w-[30%] h-40 bg-red-400 blur-[600px]"></span>
+         <span className="absolute top-[150vh] w-[50%] h-40 bg-white blur-[1000px]"></span>
+
+      <div className="text-center max-w-6xl z-1 mx-auto px-4 border- border-white/20 pb-12">
         <h3 className="text-4xl md:text-5xl font-bold leading-snug mb-6 tracking-tight">
-          How Callarity Uses AI Voice to Power{" "}
+          How Callarity Uses AI Voice to Power{" "}<br/>
           <span className="bg-gradient-to-r from-red-500 via-pink-400 to-white bg-clip-text text-transparent">
             Human-Like
           </span>
@@ -52,19 +54,20 @@ export default function CinematicScroll() {
           and multilingual fluency.
         </p>
       </div>
-      <div className="relative w-full max-w-5xl text-white">
+
+      <div className="relative w-full max-w-5xl text-white rounded-2xl border-white/30 border ">
         <div className="flex w-full">
           {/* Left sidebar sticky */}
-          <div className="w-1/2 sticky top-0 px-4 h-screen flex flex-col justify-center">
+          <div className="w-1/2 sticky top-0 px-4 h-screen  flex flex-col justify-center">
             <AnimatePresence mode="wait">
               <motion.div
                 key={activeIndex}
-                initial={{ opacity: 0, y: 50 }}
-                animate={{ opacity: 1, y: 0 }}
+                initial={{ opacity: 0, y: 50, filter: "blur(10px)" }}
+                animate={{ opacity: 1, y: 0 , filter: "blur(0px)"}}
                 exit={{ opacity: 0, y: -50 }}
                 transition={{ duration: 0.4 }}
               >
-                <h2 className="text-5xl mb-6 font-bold bg-gradient-to-r from-red-300 via-red-600 to-red-800 bg-clip-text text-transparent">
+                <h2 className="text-5xl mb-6 font-bold bg-gradient-to-r from-red-400 via-pink-400 to-white  bg-clip-text text-transparent">
                   {cards[activeIndex].heading}
                 </h2>
           
@@ -80,7 +83,7 @@ export default function CinematicScroll() {
           </div>
 
           {/* Right scrollable content */}
-          <div className="w-1/2 relative flex flex-col gap-24 justify-center items-center">
+          <div className="w-1/2 relative flex flex-col border border- rounded-2xl  border-white/30 justify-center items-center">
             {cards.map((card, idx) => (
               <Section
                 key={idx}
@@ -109,7 +112,7 @@ function Section({
   setActiveIndex: React.Dispatch<React.SetStateAction<number>>;
 }) {
   const [ref, inView] = useInView({
-    threshold: 0.6,
+    threshold: .5,
   });
 
   useEffect(() => {
@@ -119,18 +122,19 @@ function Section({
   return (
     <div
       ref={ref}
-      className="relative w-full h-screen flex items-center justify-center px-12"
+      className="relative w-full h-[100vh] flex items-center justify-center"
     >
       <motion.img
         src={card.img}
         alt={card.heading}
-        initial={{ y: 100, opacity: 0 }}
+        initial={{ y: 100, scale:.5,  }}
         animate={{
-          y: activeIndex >= idx ? -idx * 60 : 100,
-          opacity: activeIndex >= idx ? 1 : 0,
+          scale:1,
+          y: activeIndex >= idx ? -idx * 10 : 10,
+          
         }}
-        transition={{ duration: 0.8, ease: "easeInOut" }}
-        className="absolute right-0 rounded-xl shadow-2xl w-full aspect-square object-cover object-center"
+        transition={{ duration: 0.3, ease: "easeInOut" }}
+        className="absolute right-0 rounded-xl p-4 w-full aspect-square object-contain object-center"
         style={{ zIndex: idx }}
       />
     </div>

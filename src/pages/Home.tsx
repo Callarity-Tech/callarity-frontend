@@ -19,7 +19,9 @@ export default function Home() {
 
       {/* CTA SECTION */}
 
-   <div className="w-full relative">
+   <div className="w-full relative
+  
+   ">
         <PromoSection />
       </div>
 

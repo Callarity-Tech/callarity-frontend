@@ -61,7 +61,7 @@ function HeroSection() {
         transition={{ duration: 0.6 }}
         className="space-y-6 max-w-4xl z-10 flex flex-col items-center"
       >
-        <h1 className="text-5xl md:text-7xl lg:text-8xl font-bold tracking-tight text-white flex justify-center flex-wrap gap-1">
+        <h1 className="text-5xl md:text-7xl lg:text-8xl noto-serif  font-bold tracking-tight text-white flex justify-center flex-wrap gap-1">
           {[...title].map((char, i) => (
             <motion.span
               key={i}

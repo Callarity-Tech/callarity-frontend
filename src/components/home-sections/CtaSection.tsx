@@ -6,7 +6,7 @@ export default function CtaSection() {
   const year = new Date().getFullYear();
 
   return (
-    <section className="relative w-full overflow-hidden bg-[#000000]">
+    <section className="relative w-full mt-12 overflow-hidden bg-[#000000]">
       {/* Background logo image */}
      
 
