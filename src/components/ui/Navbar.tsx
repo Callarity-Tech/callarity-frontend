@@ -1,7 +1,8 @@
-import React from "react";
+import React, { use } from "react";
 import { motion } from "framer-motion";
 import paperTexture from "../../assets/paper-texture.webp";
-
+import { Link, useLocation } from "react-router";
+import { useEffect } from "react";
 
 type NavItem = {
   id: string;
@@ -11,16 +12,23 @@ type NavItem = {
 };
 
 const navItems: NavItem[] = [
-  { id: "home", label: "Home", href: "#home" },
+  { id: "home", label: "Home", href: "/" },
   { id: "docs", label: "Docs", href: "#docs" },
   { id: "pricing", label: "Pricing", href: "#pricing" },
-  { id: "login", label: "Login", href: "#login", type: "button" },
-  { id: "signup", label: "Sign Up", href: "#signup", type: "button" },
+  { id: "login", label: "Login", href: "/login", type: "button" },
+  { id: "register", label: "Register", href: "/register", type: "button" },
 ];
 
 const Navbar: React.FC = () => {
-  const [active, setActive] = React.useState<string>(navItems[0].id);
+ const location = useLocation();
+  const [active, setActive] = React.useState<string>("home");
   const [hovered, setHovered] = React.useState<string | null>(null);
+
+ useEffect(() => {
+   // match active nav item based on current URL
+   const current = navItems.find((item) => item.href === location.pathname);
+   if (current) setActive(current?.id || "home");
+ }, [location.pathname]);
 
   return (
     <header className="fixed inset-x-0 top-4 z-50 pointer-events-none">
@@ -64,29 +72,26 @@ const Navbar: React.FC = () => {
 
               return (
                 <li key={item.id} id={item.id} className="relative z-10">
-                  <motion.a
-                    onClick={(e) => {
-                      e.preventDefault();
+                  <Link
+                    onClick={() => {
+                    
                       setActive(item.id);
-                      if (item.href) {
-                        const el = document.querySelector(item.href);
-                        if (el) el.scrollIntoView({ behavior: "smooth" });
-                      }
+                     
                     }}
                     onMouseEnter={() => setHovered(item.id)}
                     onMouseLeave={() => setHovered(null)}
-                    href={item.href ?? "#"}
-                    className={`flex items-center justify-center px-4 py-2 rounded-2xl  text-sm transition-all duration-200 relative overflow-hidden ${
+                    to={item.href || "#"}
+                    className={`flex items-center justify-center z-1 px-4 py-2 rounded-2xl  text-sm transition-all duration-200 relative overflow-hidden ${
                       isButton
                         ? "border border-red-500/70  font-semibold hover:bg-red-600/30 text-red-100 before:absolute before:inset-x-0 before:top-0 before:h-px before:bg-gradient-to-r before:from-transparent before:via-white/60 before:to-transparent before:opacity-70"
                         : isActive
                         ? "text-white"
                         : "text-gray-300 hover:text-white"
                     }`}
-                    whileTap={{ scale: 0.97 }}
+                   
                   >
                     {item.label}
-                  </motion.a>
+                  </Link>
                 </li>
               );
             })}

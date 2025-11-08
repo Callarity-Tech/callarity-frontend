@@ -1,6 +1,9 @@
 import { BrowserRouter, Route, Routes } from "react-router";
 import { useEffect } from "react";
 import Home from "./pages/Home";
+import Dashboard from "./pages/Dashboard";
+import Login from "./pages/Login";
+import Register from "./pages/Register";
 import Lenis from "@studio-freight/lenis";
 import Navbar from "./components/ui/Navbar";
 function App() {
@@ -28,6 +31,9 @@ function App() {
       {" "} <Navbar />
       <Routes>
         <Route path="/" element={<Home />} />
+          <Route path="/dashboard" element={<Dashboard />} />
+          <Route path="/login" element={<Login />} />
+           <Route path="/register" element={<Register />} />
       </Routes>
     </BrowserRouter>
   );
