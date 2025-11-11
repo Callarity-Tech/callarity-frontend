@@ -6,23 +6,60 @@ app.use(cors());
 app.use(express.json());
 
 app.post("/chat", async (req, res) => {
-  const { text } = req.body;
-  const response = await fetch("http://localhost:11434/api/generate", {
+  const userText = req.body.text; // ✅ correct way to read input
+
+  const prompt = `
+You are an information extractor.
+Do NOT reply conversationally.
+Do NOT ask questions.
+
+Your job is ONLY to extract the following from the user message:
+- name (person name)
+- product_id (order or product code)
+- issue (problem description)
+
+Return JSON only.
+If a field is not found, return null for that field.
+
+Schema:
+{
+  "name": string | null,
+  "product_id": string | null,
+  "issue": string | null
+}
+
+User: "${userText}"
+`;
+
+  const llmRes = await fetch("http://localhost:11434/api/generate", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({
       model: "llama3",
-      prompt: `You are a friendly voice assistant. Respond naturally.
-User: ${text}
-Assistant: `,
-      stream: false
-    })
+      prompt,
+      stream: false,
+    }),
   });
 
-  const data = await response.json();
-  const reply = data.response;
+  const llmData = await llmRes.json(); // ✅ get LLM output text
 
-  res.json({ reply });
+  // ✅ Safe JSON parsing (no crashes)
+  let extracted;
+  try {
+    extracted = JSON.parse(llmData.response);
+  } catch (e) {
+    // Attempt to extract JSON substring if model adds noise
+    const match = llmData.response.match(/\{[\s\S]*\}/);
+    if (match) {
+      extracted = JSON.parse(match[0]);
+    } else {
+      extracted = { name: null, product_id: null, issue: null };
+    }
+  }
+
+  // ✅ Always return structured JSON
+  res.json(extracted);
 });
 
-app.listen(3000, () => console.log("✅ API running on http://localhost:3000"));
+
+app.listen(3000, () => console.log("✅ API running → http://localhost:3000"));
