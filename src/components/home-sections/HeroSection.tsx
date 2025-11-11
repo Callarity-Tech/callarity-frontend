@@ -1,6 +1,6 @@
 import { motion } from "framer-motion";
 import paperTex from "../../assets/paper-texture.webp";
-
+import { Link } from "react-router";
 const title = "Callarity AI";
 
 function HeroSection() {
@@ -102,9 +102,9 @@ function HeroSection() {
           <button className="px-8 py-3 bg-white text-black font-semibold rounded-3xl hover:bg-gray-200 transition-colors duration-200">
             Get Early Access
           </button>
-          <button className="px-8 py-3 bg-white/20 text-white font-semibold rounded-3xl border border-gray-700 hover:border-gray-600 transition-colors duration-200">
-            Learn more
-          </button>
+         <Link to="/demo"> <button className="px-8 py-3 bg-white/20 text-white font-semibold rounded-3xl border border-gray-700 hover:border-gray-600 transition-colors duration-200">
+            Demo
+          </button></Link>
         </motion.div>
       </motion.div>
     </section>
