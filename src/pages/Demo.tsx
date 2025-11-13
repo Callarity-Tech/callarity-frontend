@@ -75,12 +75,11 @@ useEffect(() => {
 
 
 async function say(text: string, after?: () => void) {
-  const natural = await humanize(text); // keep your tone smoothing
+  const natural = await humanize(text);
   addMessage(natural, "ai");
 
   try {
-    // Request WAV audio from Piper server
-    const res = await fetch("http://127.0.0.1:5000/api/tts", {
+    const res = await fetch("http://localhost:3000/api/murf-tts", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ text: natural })
@@ -88,8 +87,8 @@ async function say(text: string, after?: () => void) {
 
     const audioBlob = await res.blob();
     const audioURL = URL.createObjectURL(audioBlob);
-
     const audio = new Audio(audioURL);
+
     audio.onended = () => {
       after?.();
       if (autoMode) startListening();
@@ -97,20 +96,16 @@ async function say(text: string, after?: () => void) {
     audio.play();
 
   } catch (err) {
-    console.warn("Piper TTS server not running. Falling back to browser TTS.", err);
+    console.warn("Murf TTS failed – fallback to browser TTS.", err);
 
     const utter = new SpeechSynthesisUtterance(natural);
+    speechSynthesis.speak(utter);
     utter.onend = () => {
       after?.();
       if (autoMode) startListening();
     };
-    speechSynthesis.speak(utter);
   }
 }
-
-
-
-
 
 
   function startListening() {
