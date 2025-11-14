@@ -2,7 +2,7 @@ import { useState, useRef, useEffect } from "react";
 import { motion } from "framer-motion";
 import texture from "../assets/paper-texture.webp";
 import { Link } from "react-router";
-
+import { ElevenLabsClient } from "@elevenlabs/elevenlabs-js";
 type Message = { text: string; sender: "user" | "ai" };
 
 const SpeechRecognition =
@@ -16,6 +16,8 @@ export default function App() {
   const [messages, setMessages] = useState<Message[]>([
     { text: "Hey! I'm here to help with product issues. Just say “I want to file a complaint.”", sender: "ai" },
   ]);
+  const [language, setLanguage] = useState<"english" | "hindi">("english");
+
   const [listening, setListening] = useState(false);
   const [autoMode, setAutoMode] = useState(false);
   const [thinking, setThinking] = useState(false);
@@ -40,65 +42,84 @@ useEffect(() => {
   const addMessage = (text: string, sender: "user" | "ai") =>
     setMessages((prev) => [...prev, { text, sender }]);
 
-  async function humanize(text: string) {
-    try {
-      setThinking(true);
-      const res = await fetch("http://localhost:11434/api/generate", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          model: "llama3",
-          prompt: `Rewrite this to sound natural, warm, and short. Do NOT add emojis.\n"${text}"`,
-          stream: false,
-        }),
-      });
-      const data = await res.json();
-      setThinking(false);
-      return (data.response || text).trim();
-    } catch {
-      return text;
-    }
+async function humanize(text: string) {
+  try {
+    setThinking(true);
+    const res = await fetch("http://localhost:11434/api/generate", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        model: "llama3",
+        prompt: `Rewrite the text below in a natural, friendly, human tone.
+        Respond ONLY in ${language}. 
+        Do NOT say you're rewriting anything.
+        Do NOT include quotes, explanations, or meta-text.
+        Text: ${text}`,
+        stream: false,
+      }),
+    });
+    const data = await res.json();
+    setThinking(false);
+    return (data.response || text).trim();
+  } catch {
+    return text;
   }
-
-// async function playAudioFromBlob(blob: Blob, onFinish?: () => void) {
-//   const arrayBuffer = await blob.arrayBuffer();
-//   const audioCtx = new AudioContext();
-//   const buffer = await audioCtx.decodeAudioData(arrayBuffer);
-
-//   const source = audioCtx.createBufferSource();
-//   source.buffer = buffer;
-//   source.connect(audioCtx.destination);
-//   source.onended = onFinish || null;
-//   source.start(0);
-// }
+}
 
 
+
+
+
+
+const eleven = new ElevenLabsClient({
+  apiKey: "", 
+  environment: "https://api.elevenlabs.io",
+});
 
 async function say(text: string, after?: () => void) {
-  const natural = await humanize(text); // keep your tone smoothing
+  const natural = await humanize(text);
   addMessage(natural, "ai");
 
   try {
-    // Request WAV audio from Piper server
-    const res = await fetch("http://127.0.0.1:5000/api/tts", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ text: natural })
-    });
+    // Create a MediaSource to feed MP3 chunks into as they arrive
+    const mediaSource = new MediaSource();
+    const audio = new Audio();
+    audio.src = URL.createObjectURL(mediaSource);
 
-    const audioBlob = await res.blob();
-    const audioURL = URL.createObjectURL(audioBlob);
-
-    const audio = new Audio(audioURL);
     audio.onended = () => {
       after?.();
       if (autoMode) startListening();
     };
-    audio.play();
 
+    audio.play().catch(console.warn);
+
+    // Wait for the MediaSource to be open before appending data
+    mediaSource.addEventListener("sourceopen", async () => {
+      const sourceBuffer = mediaSource.addSourceBuffer("audio/mpeg");
+
+      const stream = await eleven.textToSpeech.stream("A7AUsa1uITCDpK29MG3m", {
+        outputFormat: "mp3_44100_128",
+        text: natural,
+         modelId: "eleven_multilingual_v2",
+      });
+
+      for await (const chunk of stream) {
+        const buffer = new Uint8Array(chunk);
+        await new Promise((resolve) => {
+          const onUpdate = () => {
+            sourceBuffer.removeEventListener("updateend", onUpdate);
+            resolve(null);
+          };
+          sourceBuffer.addEventListener("updateend", onUpdate);
+          sourceBuffer.appendBuffer(buffer);
+        });
+      }
+
+      // Signal the end of stream
+      mediaSource.endOfStream();
+    });
   } catch (err) {
-    console.warn("Piper TTS server not running. Falling back to browser TTS.", err);
-
+    console.warn("ElevenLabs real-time streaming failed, falling back to browser TTS.", err);
     const utter = new SpeechSynthesisUtterance(natural);
     utter.onend = () => {
       after?.();
@@ -107,9 +128,6 @@ async function say(text: string, after?: () => void) {
     speechSynthesis.speak(utter);
   }
 }
-
-
-
 
 
 
@@ -202,32 +220,60 @@ async function say(text: string, after?: () => void) {
   recognition.onend = () => setListening(false);
 
   // -------- Mic Volume Wave --------
-  useEffect(() => {
-    let ctx: AudioContext | null = null;
-    let analyser: AnalyserNode | null = null;
-    let data: Uint8Array, raf: number;
+useEffect(() => {
+  let ctx: AudioContext | null = null;
+  let analyser: AnalyserNode | null = null;
+  let data: Uint8Array;
+  let raf: number;
 
-    (async () => {
-      const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
-      ctx = new AudioContext();
-      analyser = ctx.createAnalyser();
-      analyser.fftSize = 256;
-      const src = ctx.createMediaStreamSource(stream);
-      src.connect(analyser);
-      data = new Uint8Array(analyser.frequencyBinCount);
+  (async () => {
+    const stream = await navigator.mediaDevices.getUserMedia({
+      audio: {
+        echoCancellation: true,
+        noiseSuppression: false,
+        autoGainControl: true, // prevent browser from boosting noise
+      },
+    });
 
-      const tick = () => {
-        analyser?.getByteTimeDomainData(data);
-        let sum = 0;
-        for (let i = 0; i < data.length; i++) sum += ((data[i] - 128) / 128) ** 2;
-        setVolume(Math.min(Math.sqrt(sum / data.length) * 4, 1));
-        raf = requestAnimationFrame(tick);
-      };
-      tick();
-    })();
+    ctx = new AudioContext();
+    analyser = ctx.createAnalyser();
+    analyser.fftSize = 256;
 
-    return () => { ctx?.close(); cancelAnimationFrame(raf); };
-  }, []);
+    const src = ctx.createMediaStreamSource(stream);
+    src.connect(analyser);
+
+    data = new Uint8Array(analyser.frequencyBinCount);
+
+    const tick = () => {
+      analyser.getByteTimeDomainData(data);
+
+      // Compute RMS
+      let sum = 0;
+      for (let i = 0; i < data.length; i++) {
+        sum += ((data[i] - 128) / 128) ** 2;
+      }
+
+      let energy = Math.sqrt(sum / data.length);
+
+      // 🚫 Noise gate (kill low room noise)
+      if (energy < 0.035) energy = 0;
+
+      // 🎚 Smooth movement (EMA)
+      const SMOOTHING = 0.25;
+      setVolume((prev) => prev * (1 - SMOOTHING) + energy * 1.2 * SMOOTHING);
+
+      raf = requestAnimationFrame(tick);
+    };
+
+    tick();
+  })();
+
+  return () => {
+    ctx?.close();
+    cancelAnimationFrame(raf);
+  };
+}, []);
+
 
 
   // ---------- UI ----------
@@ -244,7 +290,7 @@ async function say(text: string, after?: () => void) {
         animate={{ x: [0, 30, 0], y: [0, -20, 0], scale: [1, 1.05, 1] }}
         transition={{ duration: 14, repeat: Infinity, ease: "easeInOut", repeatType: "reverse" }}
       />
-
+<div className="absolute w-[1100px] h-[200%] rotate-[-45deg] bg-white/10 rounded-full filter blur-3xl "></div>
       <motion.div initial={{ scale: 0 }} animate={{ scale: 2 }} transition={{ duration: 1 }}
         className="w-full h-full absolute top-0 left-0 -z-0 bg-logo opacity-10 overflow-hidden" />
 
@@ -338,10 +384,17 @@ async function say(text: string, after?: () => void) {
         >
           Auto: {autoMode ? "ON" : "OFF"}
         </button>
+<button
+  className="z-10 bg-gradient-to-b from-[#0088ffbe] to-blue-400  hover:from-blue-600 hover:to-blue-300" 
+  style={{ ...styles.button, background: language === "english" ? "" : "#ff9100" }}
+  onClick={() => setLanguage((l) => (l === "english" ? "hindi" : "english"))}
+>
+  {language === "english" ? "Switch to Hindi" : "Switch to English"}
+</button>
 
        
 
-        <Link className="z-10" to="/dashboard" style={{ ...styles.button }}>
+        <Link className="z-10 border-2 border-white" to="/dashboard" style={{ ...styles.button }}>
           Dashboard
         </Link>
       </motion.div>
@@ -369,11 +422,11 @@ const styles: Record<string, React.CSSProperties> = {
   },
   msg: { padding: "10px 14px", borderRadius: "12px", maxWidth: "80%" },
   user: { background: "#4c6ef5", alignSelf: "flex-end" },
-  ai: { background: "#444", alignSelf: "flex-start" },
+  ai: { background: "hsl(240, 100%, 1%)" ,border:"1px solid hsl(240, 100%, 90%)", alignSelf: "flex-start" },
   button: {
     marginTop: "20px",
     padding: "14px 30px",
-    border: "none",
+   
     borderRadius: "50px",
     fontSize: "18px",
     color: "white",
