@@ -1,6 +1,7 @@
 import express from "express";
 import cors from "cors";
-
+import dotenv from "dotenv";
+dotenv.config();
 const app = express();
 app.use(cors());
 app.use(express.json());
@@ -59,6 +60,71 @@ User: "${userText}"
 
   // ✅ Always return structured JSON
   res.json(extracted);
+});
+
+app.post("/api/murf-tts", async (req, res) => {
+  const { text } = req.body;
+  if (!text || text.trim() === "") {
+    return res.status(400).json({ error: "Missing text input" });
+  }
+
+  console.log("📤 Sending text to Murf:", text);
+
+  try {
+    const murfRes = await fetch("https://api.murf.ai/v1/speech/generate", {
+      method: "POST",
+      headers: {
+        "Authorization": `Bearer ${process.env.MURF_API_KEY}`,
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify({
+        text,
+        voice_id: "bn-IN-arnab",   // or try "en-US-jessica" for more natural tone
+        style: "conversational",   // try also "neutral" or "customer_support"
+        emotion: "empathetic",     // optional emotional tone
+        speed: 1.0,
+        pitch: 1.0
+      })
+    });
+
+    console.log("📡 Murf status:", murfRes.status, murfRes.statusText);
+
+    // Read as text first (so we can inspect format)
+    const murfText = await murfRes.text();
+    console.log("📥 Murf raw response:", murfText.slice(0, 500)); // log first 500 chars
+
+    // Try to parse JSON
+    let murfData;
+    try {
+      murfData = JSON.parse(murfText);
+    } catch {
+      murfData = null;
+    }
+
+    // ✅ CASE 1: Murf returned a JSON with audio URL
+    if (murfData && murfData.audio && murfData.audio.url) {
+      console.log("✅ Got audio URL:", murfData.audio.url);
+      return res.json({ audioUrl: murfData.audio.url });
+    }
+
+    // ✅ CASE 2: Murf returned binary audio directly (fallback)
+    if (murfRes.headers.get("content-type")?.includes("audio")) {
+      console.log("✅ Received raw audio stream from Murf");
+      res.setHeader("Content-Type", murfRes.headers.get("content-type"));
+      return res.send(Buffer.from(murfText, "binary"));
+    }
+
+    // ❌ CASE 3: Unexpected response format
+    console.error("⚠️ Unexpected Murf response format");
+    return res.status(500).json({
+      error: "Unexpected Murf API response",
+      raw: murfText.slice(0, 300)
+    });
+
+  } catch (err) {
+    console.error("❌ Murf TTS Error:", err);
+    return res.status(500).json({ error: "TTS generation failed", message: err.message });
+  }
 });
 
 
