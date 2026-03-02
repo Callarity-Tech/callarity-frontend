@@ -1,17 +1,89 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Callarity</title>
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap" rel="stylesheet">
-<link href="https://fonts.googleapis.com/css2?family=Noto+Serif:ital,wght@0,100..900;1,100..900&display=swap" rel="stylesheet">
-<link href="https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap" rel="stylesheet">
-  </head>
-  <body>
-    <div id="root"></div>
-    <script type="module" src="/src/main.tsx"></script>
-  </body>
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Pricing</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <section class="pricing">
+    <div class="container">
+
+      
+      <article class="card">
+        <header class="card__header">
+          <h2 class="card__title">Starter</h2>
+          <div class="card__price">
+            <span class="currency">₹</span><span class="amount">99</span>
+            <span class="per">/ month</span>
+          </div>
+          <p class="subline">25 calls</p>
+        </header>
+
+        <ul class="features">
+          <li class="feature"><span class="icon-check" aria-hidden="true"></span>25 AI voice calls</li>
+          <li class="feature"><span class="icon-check" aria-hidden="true"></span>Basic script customization</li>
+          <li class="feature"><span class="icon-check" aria-hidden="true"></span>Email support</li>
+          <li class="feature"><span class="icon-check" aria-hidden="true"></span>Call analytics</li>
+          <li class="feature"><span class="icon-check" aria-hidden="true"></span>Standard voice quality</li>
+        </ul>
+
+        <a class="btn" href="#">Get Started</a>
+      </article>
+
+      
+      <article class="card card--popular">
+        <div class="badge">
+          <span class="badge__icon" aria-hidden="true">★</span>
+          <span>Most Popular</span>
+        </div>
+
+        <header class="card__header">
+          <h2 class="card__title">Pro</h2>
+          <div class="card__price">
+            <span class="currency">₹</span><span class="amount">499</span>
+            <span class="per">/ month</span>
+          </div>
+          <p class="subline">200 calls</p>
+        </header>
+
+        <ul class="features">
+          <li class="feature"><span class="icon-check" aria-hidden="true"></span>200 AI voice calls</li>
+          <li class="feature"><span class="icon-check" aria-hidden="true"></span>Advanced script customization</li>
+          <li class="feature"><span class="icon-check" aria-hidden="true"></span>Priority support</li>
+          <li class="feature"><span class="icon-check" aria-hidden="true"></span>Detailed analytics</li>
+          <li class="feature"><span class="icon-check" aria-hidden="true"></span>Premium voice quality</li>
+          <li class="feature"><span class="icon-check" aria-hidden="true"></span>Custom voice training</li>
+          <li class="feature"><span class="icon-check" aria-hidden="true"></span>Multi-language support</li>
+        </ul>
+
+        <a class="btn btn--primary" href="#">Get Started</a>
+      </article>
+
+      
+      <article class="card">
+        <header class="card__header">
+          <h2 class="card__title">Enterprise</h2>
+          <div class="card__price">
+            <span class="custom">Custom</span>
+          </div>
+          <p class="subline">Unlimited calls</p>
+        </header>
+
+        <ul class="features">
+          <li class="feature"><span class="icon-check" aria-hidden="true"></span>Unlimited AI voice calls</li>
+          <li class="feature"><span class="icon-check" aria-hidden="true"></span>White-label solution</li>
+          <li class="feature"><span class="icon-check" aria-hidden="true"></span>Dedicated account manager</li>
+          <li class="feature"><span class="icon-check" aria-hidden="true"></span>Custom integrations</li>
+          <li class="feature"><span class="icon-check" aria-hidden="true"></span>Advanced reporting</li>
+          <li class="feature"><span class="icon-check" aria-hidden="true"></span>SLA guarantee</li>
+          <li class="feature"><span class="icon-check" aria-hidden="true"></span>On-premise deployment</li>
+        </ul>
+
+        <a class="btn btn--ghost" href="#">Contact Sales</a>
+      </article>
+    </div>
+  </section>
+</body>
 </html>
