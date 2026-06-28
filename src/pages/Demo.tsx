@@ -6,7 +6,7 @@ import { ElevenLabsClient } from "@elevenlabs/elevenlabs-js";
 
 type Message = { text: string; sender: "user" | "ai" };
 type Step = "idle" | "waiting_name" | "waiting_product" | "waiting_issue" | "done";
-type ComplaintTicket = { name?: string; product_id?: string; issue?: string };
+type ComplaintTicket = { name?: string; product_id?: string; issue?: string; date?: string };
 type SpeechRecognitionEventLike = {
   results: ArrayLike<ArrayLike<{ transcript: string }>>;
 };
@@ -21,17 +21,16 @@ type SpeechRecognitionLike = {
 };
 type SpeechRecognitionConstructor = new () => SpeechRecognitionLike;
 
-declare global {
-  interface Window {
-    SpeechRecognition?: SpeechRecognitionConstructor;
-    webkitSpeechRecognition?: SpeechRecognitionConstructor;
-  }
-}
+type BrowserSpeechRecognitionWindow = Window & {
+  SpeechRecognition?: SpeechRecognitionConstructor;
+  webkitSpeechRecognition?: SpeechRecognitionConstructor;
+};
 
 const BAR_COUNT = 32;
 const SpeechRecognitionCtor =
   typeof window !== "undefined"
-    ? window.SpeechRecognition || window.webkitSpeechRecognition
+    ? (window as BrowserSpeechRecognitionWindow).SpeechRecognition ||
+      (window as BrowserSpeechRecognitionWindow).webkitSpeechRecognition
     : undefined;
 
 export default function App() {
@@ -258,7 +257,7 @@ function stopListening() {
 useEffect(() => {
   let ctx: AudioContext | null = null;
   let analyser: AnalyserNode | null = null;
-  let data: Uint8Array | null = null;
+  let data: Uint8Array<ArrayBuffer> | null = null;
   let raf = 0;
 
   (async () => {
@@ -277,7 +276,7 @@ useEffect(() => {
     const src = ctx.createMediaStreamSource(stream);
     src.connect(analyser);
 
-    data = new Uint8Array(analyser.frequencyBinCount);
+    data = new Uint8Array(analyser.frequencyBinCount) as Uint8Array<ArrayBuffer>;
 
     const tick = () => {
       if (!analyser || !data) return;
