@@ -5,23 +5,23 @@ export default function PricingSection() {
   const plans = [
     {
       name: "Starter",
-      price: "Free",
+      price: "₹99",
       desc: "Perfect for demos & testing your AI agent.",
-      features: ["1 Agent Voice", "Basic Call Flow", "Local-only Logs"],
+      features: ["50 AI minutes", "Basic Script", "Standard Voice", "Email Support"],
       highlight: false,
     },
     {
       name: "Pro",
-      price: "₹999 / month",
+      price: "₹499 / month",
       desc: "For small businesses running real customer calls.",
-      features: ["Unlimited Calls", "Dashboard + Logs", "Custom Persona Voices"],
+      features: ["250 AI minutes", "Dashboard + Logs", "Custom Persona Voices", "Priority Support"],
       highlight: true,
     },
     {
       name: "Enterprise",
       price: "Contact Us",
       desc: "White-label + SLA + On-prem + API Integration.",
-      features: ["AI Tool Calling", "Database Sync", "Dedicated Support"],
+      features: ["Everything in Pro","AI Tool Calling", "Database Sync", "Dedicated Support"],
       highlight: false,
     },
   ];

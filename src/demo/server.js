@@ -1,6 +1,7 @@
 import express from "express";
 import cors from "cors";
 
+
 const app = express();
 app.use(cors());
 app.use(express.json());
@@ -35,7 +36,7 @@ User: "${userText}"
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({
-      model: "llama3",
+      model: "qwen2.5",
       prompt,
       stream: false,
     }),
@@ -60,6 +61,5 @@ User: "${userText}"
   // ✅ Always return structured JSON
   res.json(extracted);
 });
-
 
 app.listen(3000, () => console.log("✅ API running → http://localhost:3000"));

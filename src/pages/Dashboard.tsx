@@ -1,127 +1,191 @@
-import { useEffect, useState } from "react";
+'use client'
+
+import { useEffect, useState } from 'react'
 import {
-  BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer,
-  PieChart, Pie, Cell
-} from "recharts";
+  BarChart,
+  Bar,
+  XAxis,
+  YAxis,
+  CartesianGrid,
+  Tooltip,
+  ResponsiveContainer,
+  PieChart,
+  Pie,
+  Cell,
+} from 'recharts'
 
 type Ticket = {
-  name: string;
-  product_id: string;
-  issue: string;
-  intent: string;
-  date: string;
-};
+  name: string
+  product_id: string
+  issue: string
+  intent: string
+  date: string
+}
+
+const INTENT_COLORS: { [key: string]: { bg: string; text: string } } = {
+  complaint: { bg: 'bg-red-500/15', text: 'text-red-700' },
+  inquiry: { bg: 'bg-blue-500/15', text: 'text-blue-700' },
+  support: { bg: 'bg-purple-500/15', text: 'text-purple-700' },
+  feedback: { bg: 'bg-amber-500/15', text: 'text-amber-700' },
+  suggestion: { bg: 'bg-green-500/15', text: 'text-green-700' },
+  other: { bg: 'bg-gray-500/15', text: 'text-gray-700' },
+}
+
+const CHART_COLORS = [
+  '#3b82f6', // blue
+  '#ef4444', // red
+  '#8b5cf6', // purple
+  '#f59e0b', // amber
+  '#10b981', // green
+  '#06b6d4', // cyan
+  '#ec4899', // pink
+  '#6366f1', // indigo
+]
 
 export default function Dashboard() {
-  const [tickets, setTickets] = useState<Ticket[]>([]);
+  const [tickets, setTickets] = useState<Ticket[]>([])
 
   useEffect(() => {
-    const data = JSON.parse(localStorage.getItem("complaints") || "[]");
-    setTickets(data.reverse());
-  }, []);
+    const data = JSON.parse(localStorage.getItem('complaints') || '[]')
+    setTickets(data.reverse())
+  }, [])
 
-  // Graph: complaints per day
   const perDay = tickets.reduce((acc: any[], t) => {
-    const d = t.date.slice(0, 10);
-    const x = acc.find((a) => a.date === d);
-    x ? x.count++ : acc.push({ date: d, count: 1 });
-    return acc;
-  }, []);
+    const d = t.date.slice(0, 10)
+    const x = acc.find((a) => a.date === d)
+    x ? x.count++ : acc.push({ date: d, count: 1 })
+    return acc
+  }, [])
 
-  // Intent distribution (pie chart)
   const intents = tickets.reduce((acc: any[], t) => {
-    const x = acc.find((a) => a.intent === t.intent);
-    x ? x.count++ : acc.push({ intent: t.intent, count: 1 });
-    return acc;
-  }, []);
+    const x = acc.find((a) => a.intent === t.intent)
+    x ? x.count++ : acc.push({ intent: t.intent, count: 1 })
+    return acc
+  }, [])
 
-  const COLORS = ["#FF4BFF", "#00E5FF", "#FFAA00", "#72FF56"];
+  const getIntentColor = (intent: string) => {
+    return INTENT_COLORS[intent?.toLowerCase()] || INTENT_COLORS['other']
+  }
 
   return (
-    <div className="min-h-screen bg-black text-white p-40 flex flex-col gap-10">
-      <h1 className="text-5xl font-bold bg-gradient-to-r from-red-400 to-white text-transparent bg-clip-text drop-shadow-lg">
-        Callarity Dashboard
-      </h1>
-
-      {/* Top Stats */}
-      <div className="grid grid-cols-3 gap-6 ">
-        <StatCard label="Total Conversations" value={tickets.length} />
-        <StatCard label="Unique Users" value={new Set(tickets.map(t => t.name)).size} />
-        <StatCard label="Distinct Intents" value={new Set(tickets.map(t => t.intent)).size} />
-      </div>
-
-      {/* Charts */}
-      <div className="grid grid-cols-2 gap-10">
-        <GlassPanel title="Complaints Over Time">
-          <ResponsiveContainer width="100%" height={260}>
-            <BarChart data={perDay}>
-              <XAxis dataKey="date" stroke="#bbb" />
-              <YAxis stroke="#bbb" />
-              <Tooltip />
-              <Bar dataKey="count" fill="#fee" radius={[8, 8, 0, 0]} />
-            </BarChart>
-          </ResponsiveContainer>
-        </GlassPanel>
-
-        <GlassPanel title="Intent Breakdown">
-          <ResponsiveContainer width="100%" height={260}>
-            <PieChart>
-              <Pie data={intents} dataKey="count" nameKey="intent" outerRadius={110}>
-                {intents.map((entry, i) => (
-                  <Cell key={i} fill={COLORS[i % COLORS.length]} />
-                ))}
-              </Pie>
-              <Tooltip />
-            </PieChart>
-          </ResponsiveContainer>
-        </GlassPanel>
-      </div>
-
-      {/* Table */}
-      <GlassPanel title="Conversation Records">
-        <div className="overflow-auto max-h-[45vh]">
-          <table className="w-full text-left text-sm">
-            <thead className="border-b border-white/20 text-red-300">
-              <tr>
-                <th className="p-2">Name</th>
-                <th className="p-2">Intent</th>
-                <th className="p-2">Product ID</th>
-                <th className="p-2">Issue</th>
-                <th className="p-2">Date</th>
-              </tr>
-            </thead>
-            <tbody>
-              {tickets.map((t, i) => (
-                <tr key={i} className="border-b border-white/10 hover:bg-white/5 transition">
-                  <td className="p-2">{t.name}</td>
-                  <td className="p-2 text-purple-300">{t.intent}</td>
-                  <td className="p-2">{t.product_id}</td>
-                  <td className="p-2">{t.issue}</td>
-                  <td className="p-2 opacity-60">{t.date.slice(0, 16).replace("T", " ")}</td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
+    <div className="min-h-screen bg-[#121212] text-foreground p-6 md:p-8">
+      <div className="max-w-7xl mx-auto space-y-8">
+        <div className="space-y-2">
+          <h1 className="text-4xl font-bold tracking-tight">Callarity Dashboard</h1>
+          <p className="text-muted-foreground">Monitor customer conversations and intent distribution</p>
         </div>
-      </GlassPanel>
+
+        <div className="grid gap-4 md:grid-cols-3">
+          <StatCard label="Total Conversations" value={tickets.length} />
+          <StatCard label="Unique Users" value={new Set(tickets.map((t) => t.name)).size} />
+          <StatCard label="Distinct Intents" value={new Set(tickets.map((t) => t.intent)).size} />
+        </div>
+
+        <div className="grid gap-6 lg:grid-cols-2">
+          <Panel title="Complaints Over Time" description="Daily conversation volume">
+            <ResponsiveContainer width="100%" height={280}>
+              <BarChart data={perDay} margin={{ top: 10, right: 10, left: -20, bottom: 0 }}>
+                <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--color-border))" />
+                <XAxis dataKey="date" stroke="hsl(var(--color-muted-foreground))" style={{ fontSize: '12px' }} />
+                <YAxis stroke="hsl(var(--color-muted-foreground))" style={{ fontSize: '12px' }} />
+                <Tooltip
+                  contentStyle={{
+                    backgroundColor: 'hsl(var(--color-card))',
+                    border: '1px solid hsl(var(--color-border))',
+                    borderRadius: '8px',
+                  }}
+                  labelStyle={{ color: 'hsl(var(--color-foreground))' }}
+                />
+                <Bar dataKey="count" fill={CHART_COLORS[0]} radius={[8, 8, 0, 0]} />
+              </BarChart>
+            </ResponsiveContainer>
+          </Panel>
+
+          <Panel title="Intent Distribution" description="Breakdown by intent type">
+            <ResponsiveContainer width="100%" height={280}>
+              <PieChart>
+                <Pie data={intents} dataKey="count" nameKey="intent" cx="50%" cy="50%" outerRadius={90} label>
+                  {intents.map((entry, i) => (
+                    <Cell key={`cell-${i}`} fill={CHART_COLORS[i % CHART_COLORS.length]} />
+                  ))}
+                </Pie>
+                <Tooltip
+                  contentStyle={{
+                    backgroundColor: 'hsl(var(--color-card))',
+                    border: '1px solid hsl(var(--color-border))',
+                    borderRadius: '8px',
+                  }}
+                  labelStyle={{ color: 'hsl(var(--color-foreground))' }}
+                />
+              </PieChart>
+            </ResponsiveContainer>
+          </Panel>
+        </div>
+
+        <Panel title="Conversation Records" description={`${tickets.length} total records`}>
+          <div className="overflow-x-auto">
+            <table className="w-full text-sm">
+              <thead>
+                <tr className="border-b border-border hover:bg-transparent">
+                  <th className="h-12 px-4 text-left align-middle font-medium text-muted-foreground">Name</th>
+                  <th className="h-12 px-4 text-left align-middle font-medium text-muted-foreground">Intent</th>
+                  <th className="h-12 px-4 text-left align-middle font-medium text-muted-foreground">Product ID</th>
+                  <th className="h-12 px-4 text-left align-middle font-medium text-muted-foreground">Issue</th>
+                  <th className="h-12 px-4 text-left align-middle font-medium text-muted-foreground">Date</th>
+                </tr>
+              </thead>
+              <tbody>
+                {tickets.slice(0, 10).map((t, i) => (
+                  <tr key={i} className="border-b border-border hover:bg-muted/50 transition-colors">
+                    <td className="px-4 py-3 align-middle">{t.name}</td>
+                    <td className="px-4 py-3 align-middle">
+                      <span className={`inline-flex items-center px-2.5 py-0.5 rounded-md text-xs font-medium ${getIntentColor(t.intent).bg} ${getIntentColor(t.intent).text}`}>
+                        {t.intent}
+                      </span>
+                    </td>
+                    <td className="px-4 py-3 align-middle text-muted-foreground">{t.product_id}</td>
+                    <td className="px-4 py-3 align-middle text-muted-foreground truncate">{t.issue}</td>
+                    <td className="px-4 py-3 align-middle text-muted-foreground text-xs">{t.date.slice(0, 16).replace('T', ' ')}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        </Panel>
+      </div>
     </div>
-  );
+  )
 }
 
 function StatCard({ label, value }: { label: string; value: number }) {
   return (
-    <div className="rounded-xl bg-white/10 backdrop-blur-xl border border-white/20 p-6 text-center shadow-lg">
-      <div className="text-4xl font-bold text-pink-300 drop-shadow-sm">{value}</div>
-      <div className="text-lg opacity-70">{label}</div>
+    <div className="rounded-lg border border-border bg-card p-6 hover:border-primary/50 transition-colors">
+      <div className="space-y-1">
+        <p className="text-sm font-medium text-muted-foreground">{label}</p>
+        <p className="text-3xl font-bold tracking-tight">{value}</p>
+      </div>
     </div>
-  );
+  )
 }
 
-function GlassPanel({ title, children }) {
+function Panel({
+  title,
+  description,
+  children,
+}: {
+  title: string
+  description?: string
+  children: React.ReactNode
+}) {
   return (
-    <div className="rounded-xl bg-white/10 backdrop-blur-xl border border-white/20 p-6 shadow-xl">
-      <h2 className="text-xl mb-4 font-semibold opacity-90">{title}</h2>
-      {children}
+    <div className="rounded-lg border border-border bg-card p-6">
+      <div className="space-y-4">
+        <div>
+          <h2 className="text-lg font-semibold tracking-tight">{title}</h2>
+          {description && <p className="text-sm text-muted-foreground mt-1">{description}</p>}
+        </div>
+        {children}
+      </div>
     </div>
-  );
+  )
 }

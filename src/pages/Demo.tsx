@@ -3,13 +3,36 @@ import { motion } from "framer-motion";
 import texture from "../assets/paper-texture.webp";
 import { Link } from "react-router";
 import { ElevenLabsClient } from "@elevenlabs/elevenlabs-js";
-type Message = { text: string; sender: "user" | "ai" };
 
-const SpeechRecognition =
-  (window.SpeechRecognition as any) || (window as any).webkitSpeechRecognition;
+type Message = { text: string; sender: "user" | "ai" };
+type Step = "idle" | "waiting_name" | "waiting_product" | "waiting_issue" | "done";
+type ComplaintTicket = { name?: string; product_id?: string; issue?: string };
+type SpeechRecognitionEventLike = {
+  results: ArrayLike<ArrayLike<{ transcript: string }>>;
+};
+type SpeechRecognitionLike = {
+  lang: string;
+  interimResults: boolean;
+  start: () => void;
+  stop: () => void;
+  onresult: ((event: SpeechRecognitionEventLike) => void) | null;
+  onerror: ((event: Event) => void) | null;
+  onend: (() => void) | null;
+};
+type SpeechRecognitionConstructor = new () => SpeechRecognitionLike;
+
+declare global {
+  interface Window {
+    SpeechRecognition?: SpeechRecognitionConstructor;
+    webkitSpeechRecognition?: SpeechRecognitionConstructor;
+  }
+}
 
 const BAR_COUNT = 32;
-type Step = "idle" | "waiting_name" | "waiting_product" | "waiting_issue" | "done";
+const SpeechRecognitionCtor =
+  typeof window !== "undefined"
+    ? window.SpeechRecognition || window.webkitSpeechRecognition
+    : undefined;
 
 export default function App() {
   const [volume, setVolume] = useState(0);
@@ -21,22 +44,24 @@ export default function App() {
   const [listening, setListening] = useState(false);
   const [autoMode, setAutoMode] = useState(false);
   const [thinking, setThinking] = useState(false);
-  const recognitionRef = useRef<any>(null);
+  const recognitionRef = useRef<SpeechRecognitionLike | null>(null);
   const isSpeakingRef = useRef(false);
   const stepRef = useRef<Step>("idle");
-  const ticketRef = useRef<{ name?: string; product_id?: string; issue?: string }>({});
+  const ticketRef = useRef<ComplaintTicket>({});
   const hasGreeted = useRef(false);
-useEffect(() => {
-  speechSynthesis.getVoices();
-  setTimeout(() => speechSynthesis.getVoices(), 200);
-}, []);
 
-  if (!recognitionRef.current) {
-    recognitionRef.current = new SpeechRecognition();
+  useEffect(() => {
+    speechSynthesis.getVoices();
+    setTimeout(() => speechSynthesis.getVoices(), 200);
+  }, []);
+
+  useEffect(() => {
+    if (!SpeechRecognitionCtor || recognitionRef.current) return;
+
+    recognitionRef.current = new SpeechRecognitionCtor();
     recognitionRef.current.lang = "en-US";
     recognitionRef.current.interimResults = false;
-  }
-  const recognition = recognitionRef.current;
+  }, []);
 
   // -------- UI helpers --------
   const addMessage = (text: string, sender: "user" | "ai") =>
@@ -49,7 +74,7 @@ async function humanize(text: string) {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
-        model: "llama3",
+        model: "qwen2.5",
         prompt: `Rewrite the text below in a natural, friendly, human tone.
         Respond ONLY in ${language}. 
         Do NOT say you're rewriting anything.
@@ -66,13 +91,8 @@ async function humanize(text: string) {
   }
 }
 
-
-
-
-
-
 const eleven = new ElevenLabsClient({
-  apiKey: "", 
+  apiKey: "sk_7c8e102ca0cb82c479929c232073244dfbfb14a6156bc461", 
   environment: "https://api.elevenlabs.io",
 });
 
@@ -129,12 +149,22 @@ async function say(text: string, after?: () => void) {
   }
 }
 
+function startListening() {
+    const recognition = recognitionRef.current;
+    if (!recognition) return;
 
-
-  function startListening() {
     try { recognition.start(); setListening(true); } catch {console.log("Recognition already started");}
   }
-  function stopListening() { try { recognition.stop(); } catch {console.log("Recognition already stopped");}; setListening(false); }
+
+function stopListening() {
+    const recognition = recognitionRef.current;
+    if (!recognition) {
+      setListening(false);
+      return;
+    }
+
+    try { recognition.stop(); } catch {console.log("Recognition already stopped");}; setListening(false);
+  }
 
   // -------- Extractors --------
   const extractName = (t: string) =>
@@ -155,8 +185,8 @@ async function say(text: string, after?: () => void) {
     return s.length > 160 ? s.slice(0, 157) + "..." : s;
   }
 
-  function saveComplaint(ticket: any) {
-    const prev = JSON.parse(localStorage.getItem("complaints") || "[]");
+  function saveComplaint(ticket: ComplaintTicket) {
+    const prev = JSON.parse(localStorage.getItem("complaints") || "[]") as ComplaintTicket[];
     prev.push({ ...ticket, date: new Date().toISOString() });
     localStorage.setItem("complaints", JSON.stringify(prev));
   }
@@ -209,22 +239,27 @@ async function say(text: string, after?: () => void) {
   }
 
   // -------- Speech Input --------
-  recognition.onresult = (e: any) => {
-    const text = e.results[0][0].transcript;
-    addMessage(text, "user");
-    stopListening();
-    handleTurn(text);
-  };
+  useEffect(() => {
+    const recognition = recognitionRef.current;
+    if (!recognition) return;
 
-  recognition.onerror = () => stopListening();
-  recognition.onend = () => setListening(false);
+    recognition.onresult = (event: SpeechRecognitionEventLike) => {
+      const text = event.results[0][0].transcript;
+      addMessage(text, "user");
+      stopListening();
+      void handleTurn(text);
+    };
+
+    recognition.onerror = () => stopListening();
+    recognition.onend = () => setListening(false);
+  }, []);
 
   // -------- Mic Volume Wave --------
 useEffect(() => {
   let ctx: AudioContext | null = null;
   let analyser: AnalyserNode | null = null;
-  let data: Uint8Array;
-  let raf: number;
+  let data: Uint8Array | null = null;
+  let raf = 0;
 
   (async () => {
     const stream = await navigator.mediaDevices.getUserMedia({
@@ -245,6 +280,8 @@ useEffect(() => {
     data = new Uint8Array(analyser.frequencyBinCount);
 
     const tick = () => {
+      if (!analyser || !data) return;
+
       analyser.getByteTimeDomainData(data);
 
       // Compute RMS
