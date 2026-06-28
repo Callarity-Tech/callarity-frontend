@@ -57,9 +57,10 @@ export default function App() {
   useEffect(() => {
     if (!SpeechRecognitionCtor || recognitionRef.current) return;
 
-    recognitionRef.current = new SpeechRecognitionCtor();
-    recognitionRef.current.lang = "en-US";
-    recognitionRef.current.interimResults = false;
+    const recognition = new SpeechRecognitionCtor();
+    recognition.lang = "en-US";
+    recognition.interimResults = false;
+    recognitionRef.current = recognition;
   }, []);
 
   // -------- UI helpers --------
@@ -251,7 +252,7 @@ function stopListening() {
 
     recognition.onerror = () => stopListening();
     recognition.onend = () => setListening(false);
-  }, []);
+  }, [handleTurn]);
 
   // -------- Mic Volume Wave --------
 useEffect(() => {
