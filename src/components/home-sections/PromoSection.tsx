@@ -39,7 +39,7 @@ export default function CinematicScroll() {
       <span className="absolute top-50 left-0 w-[30%] h-40 bg-red-400 blur-[600px]"></span>
          <span className="absolute top-[150vh] w-[50%] h-40 bg-white blur-[1000px]"></span>
 
-      <div className="text-center max-w-6xl z-1 mx-auto px-4 border- border-white/20 pb-12">
+      <div className="text-center         max-w-5xl z-1 mx-auto px-4 border- border-white/20 pb-12">
         <h3 className="text-4xl md:text-5xl font-bold leading-snug mb-6 tracking-tight">
           How Callarity Uses AI Voice to Power{" "}<br/>
           <span className="bg-gradient-to-r from-red-500 via-pink-400 to-white bg-clip-text text-transparent">

@@ -9,6 +9,7 @@ import {
 } from "framer-motion";
 import { useRef, useMemo } from "react";
 import ServicesCard from "../ui/ServicesCard";
+import { Sparkle, Lightbulb, Microphone, DeviceMobile, Lightning, ChartBar } from "@phosphor-icons/react";
 
 type WordProps = {
   word: string;
@@ -89,37 +90,37 @@ function FeaturesSection() {
     {
       title: "AI Voice Expertise That Converts",
       desc: "Our team blends NLP, voice tech, and regional language fluency to craft AI callers that sound natural and drive real outcomes — from appointment bookings to feedback collection.",
-      icon: "✨",
+      icon: <Sparkle size={24} weight="fill" />,
       glowColor: "rgba(255, 60, 60, 0.35)",
     },
     {
       title: "Industry-Specific, Goal-Oriented AI Call Automation",
       desc: "No two businesses are alike. Whether you're a real estate broker or a coaching center, we customize scripts and call flows to match your exact needs and tone.",
-      icon: "💡",
+      icon: <Lightbulb size={24} weight="fill" />,
       glowColor: "rgba(60, 255, 100, 0.35)",
     },
     {
       title: "Natural, Multilingual Communication",
       desc: "Stand out with AI that speaks like your customers — in Hindi, Tamil, Marathi, Bengali, and more. No robotic tones. Just natural conversations.",
-      icon: "🎙️",
+      icon: <Microphone size={24} weight="fill" />,
       glowColor: "rgba(60, 180, 255, 0.35)",
     },
     {
       title: "Mobile-Ready Voice Stack",
       desc: "Our AI voice system is optimized for mobile-first users, ensuring smooth delivery and crystal-clear quality for recipients on any device.",
-      icon: "📱",
+      icon: <DeviceMobile size={24} weight="fill" />,
       glowColor: "rgba(255, 200, 60, 0.35)",
     },
     {
       title: "Smart Outreach & Follow-Up Logic",
       desc: "Our AI doesn't just call — it follows up, handles objections, collects responses, and syncs everything to your CRM for precise lead tracking.",
-      icon: "⚡",
+      icon: <Lightning size={24} weight="fill" />,
       glowColor: "rgba(255, 80, 200, 0.35)",
     },
     {
       title: "Call Analytics & Optimization",
       desc: "Track pickup rates, call durations, and user sentiments. With Callarity's analytics dashboard, you're always improving and closing faster.",
-      icon: "📊",
+      icon: <ChartBar size={24} weight="fill" />,
       glowColor: "rgba(100, 255, 255, 0.35)",
     },
   ];

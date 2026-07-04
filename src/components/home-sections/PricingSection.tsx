@@ -1,4 +1,5 @@
 import { motion } from "framer-motion";
+import { Check } from "@phosphor-icons/react";
 import paperTex from "../../assets/paper-texture.webp";
 
 export default function PricingSection() {
@@ -57,7 +58,7 @@ export default function PricingSection() {
             <ul className="space-y-2 mb-6 text-sm text-gray-200">
               {p.features.map((f, idx) => (
                 <li key={idx} className="flex gap-2">
-                  <span className="text-red-300">✔</span> {f}
+                  <Check size={16} weight="bold" className="text-red-300 shrink-0 mt-0.5" /> {f}
                 </li>
               ))}
             </ul>

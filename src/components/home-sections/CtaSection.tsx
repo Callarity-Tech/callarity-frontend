@@ -11,7 +11,7 @@ export default function CtaSection() {
      
 
       {/* CTA content */}
-      <div className="max-w-3xl border-t border-white/15  mx-auto text-center relative z-10 py-24 px-4">
+      <div className="max-w-5xl border-t border-white/15  mx-auto text-center relative z-10 py-24 px-4">
         <motion.h3
           className="text-3xl md:text-4xl font-bold text-white mb-6"
           initial={{ opacity: 0, y: 20 }}
@@ -61,7 +61,7 @@ export default function CtaSection() {
         </div>
 
         {/* Footer content */}
-        <div className="relative z-10 max-w-6xl mx-auto px-6 py-16 grid gap-10">
+        <div className="relative z-10 max-w-5xl mx-auto px-6 py-16 grid gap-10">
           {/* Top row: logo + subscribe */}
           <div className="grid gap-6 md:grid-cols-[auto_1fr] items-center justify-between border-b border-white/10 pb-8">
             <div className="flex items-center gap-3">
